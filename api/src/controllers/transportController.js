@@ -53,10 +53,23 @@ const deleteTransportRequest = (req, res) => {
   });
 };
 
+const updateTransportRequestPriority = (req, res) => {
+  const { id } = req.params;
+  const { priority } = req.body;
+  
+  transportRequestModel.updateTransportRequestPriority(id, priority, (err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Erro interno do servidor' });
+    }
+    return res.status(200).json({ message: 'Prioridade da solicitação de transporte atualizada com sucesso' });
+  });
+};
+
 module.exports = {
   getAllTransportRequests,
   getTransportRequestById,
   createTransportRequest,
   updateTransportRequest,
   deleteTransportRequest,
+  updateTransportRequestPriority,
 };

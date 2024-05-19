@@ -19,4 +19,7 @@ router.post('/transport-requests', transportRequestController.createTransportReq
 router.put('/transport-requests/:id', transportRequestController.updateTransportRequest);
 router.delete('/transport-requests/:id', transportRequestController.deleteTransportRequest);
 
+// Rota de Priorização de Transporte
+router.put('/transport-requests/:id/priority', transportRequestController.updateTransportRequestPriority);
+
 module.exports = router;

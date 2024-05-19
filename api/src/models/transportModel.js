@@ -64,10 +64,22 @@ const deleteTransportRequest = (id, callback) => {
   });
 };
 
+const updateTransportRequestPriority = (id, priority, callback) => {
+  const query = 'UPDATE TransportRequests SET priority = ? WHERE id = ?';
+  db.query(query, [priority, id], (err) => {
+    if (err) {
+      console.error('Erro ao atualizar a prioridade da solicitação de transporte:', err);
+      return callback(err);
+    }
+    return callback(null);
+  });
+};
+
 module.exports = {
   getAllTransportRequests,
   getTransportRequestById,
   insertTransportRequest,
   updateTransportRequest,
   deleteTransportRequest,
+  updateTransportRequestPriority,
 };
