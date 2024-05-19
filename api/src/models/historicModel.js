@@ -1,6 +1,6 @@
 const { db } = require('../models/db');
 
-exports.registrarHistorico = (solicitacaoId, descricao, callback) => {
+registrarHistorico = (solicitacaoId, descricao, callback) => {
     const timestamp = new Date();
     const query = 'INSERT INTO TransportHistoric (solicitacaoId, descricao, timestamp) VALUES (?, ?, ?)';
     db.query(query, [solicitacaoId, descricao, timestamp], (err, result) => {
@@ -8,7 +8,7 @@ exports.registrarHistorico = (solicitacaoId, descricao, callback) => {
     });
 };
 
-exports.getHistoricoBySolicitacaoId = (solicitacaoId, callback) => {
+getHistoricoBySolicitacaoId = (solicitacaoId, callback) => {
     const query = 'SELECT * FROM TransportHistoric WHERE solicitacaoId = ? ORDER BY timestamp DESC';
     db.query(query, [solicitacaoId], (err, results) => {
         if (err) {
@@ -17,4 +17,9 @@ exports.getHistoricoBySolicitacaoId = (solicitacaoId, callback) => {
         }
         return callback(null, results);
     });
+};
+
+module.exports = {
+    registrarHistorico,
+    getHistoricoBySolicitacaoId,
 };
