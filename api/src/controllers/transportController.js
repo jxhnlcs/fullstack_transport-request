@@ -29,7 +29,9 @@ const createTransportRequest = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Erro interno do servidor' });
     }
-    historicoModel.registrarHistorico(insertId, 'Solicitação de transporte criada', (err) => {
+    const description = 'Solicitação de transporte criada';
+
+    historicoModel.registrarHistorico(id, description, (err) => {
       if (err) {
         console.log("Erro ao registrar no histórico: ", err);
       }
@@ -62,7 +64,9 @@ const deleteTransportRequest = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Erro interno do servidor' });
     }
-    historicoModel.registrarHistorico(insertId, 'Solicitação de transporte apagada', (err) => {
+    const description = 'Solicitação de transporte deletada';
+
+    historicoModel.registrarHistorico(id, description, (err) => {
       if (err) {
         console.log("Erro ao registrar no histórico: ", err);
       }
@@ -105,6 +109,9 @@ const updateTransportRequestStatus = (req, res) => {
       description = 'Solicitação de transporte aceita';
     } else if (request_status === 'Negado') {
       description = 'Solicitação de transporte negada';
+    }
+    else if (request_status === 'Pendente') {
+      description = 'Solicitação de transporte pendente';
     }
 
     historicoModel.registrarHistorico(id, description, (err) => {
