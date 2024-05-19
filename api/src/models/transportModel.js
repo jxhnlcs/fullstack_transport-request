@@ -38,12 +38,24 @@ const insertTransportRequest = (data, callback) => {
 };
 
 const updateTransportRequest = (id, data, callback) => {
-  const query = `
-    UPDATE TransportRequests
-    SET patient_name = ?, status = ?, priority = ?, data = ?, initial_point = ?, destination_point = ?, maqueiro_id = ?
-    WHERE id = ?
-  `;
-  const params = [data.patient_name, data.status, data.priority, data.data, data.initial_point, data.destination_point, data.maqueiro_id, id];
+  const fields = ['patient_name', 'status', 'priority', 'data', 'initial_point', 'destination_point', 'maqueiro_id'];
+  let updates = [];
+  let params = [];
+
+  fields.forEach(field => {
+    if (data.hasOwnProperty(field) && data[field] !== undefined) {
+      updates.push(`${field} = ?`);
+      params.push(data[field]);
+    }
+  });
+
+  if (updates.length === 0) {
+    return callback(new Error("Sem campos validos para atualizar"), null);
+  }
+  params.push(id);
+
+  const query = `UPDATE TransportRequests SET ${updates.join(', ')} WHERE id = ?`;
+
   db.query(query, params, (err) => {
     if (err) {
       console.error('Erro ao atualizar solicitação de transporte:', err);
@@ -52,6 +64,7 @@ const updateTransportRequest = (id, data, callback) => {
     return callback(null);
   });
 };
+
 
 const deleteTransportRequest = (id, callback) => {
   const query = 'DELETE FROM TransportRequests WHERE id = ?';

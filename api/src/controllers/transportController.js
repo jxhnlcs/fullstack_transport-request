@@ -45,6 +45,13 @@ const updateTransportRequest = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Erro interno do servidor' });
     }
+    const description = 'Solicitação de transporte atualizada';
+
+    historicoModel.registrarHistorico(id, description, (err) => {
+      if (err) {
+        console.log("Erro ao registrar no histórico: ", err);
+      }
+    });
     return res.status(200).json({ message: 'Solicitação de transporte atualizada com sucesso' });
   });
 };
@@ -55,6 +62,11 @@ const deleteTransportRequest = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Erro interno do servidor' });
     }
+    historicoModel.registrarHistorico(insertId, 'Solicitação de transporte apagada', (err) => {
+      if (err) {
+        console.log("Erro ao registrar no histórico: ", err);
+      }
+    });
     return res.status(200).json({ message: 'Solicitação de transporte deletada com sucesso' });
   });
 };
@@ -67,6 +79,14 @@ const updateTransportRequestPriority = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Erro interno do servidor' });
     }
+
+    const description = `Solicitação de transporte priorizada como ${priority}`;
+
+    historicoModel.registrarHistorico(id, description, (err) => {
+      if (err) {
+        console.log("Erro ao registrar no histórico: ", err);
+      }
+    });
     return res.status(200).json({ message: 'Prioridade da solicitação de transporte atualizada com sucesso' });
   });
 };
@@ -79,9 +99,24 @@ const updateTransportRequestStatus = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Erro interno do servidor' });
     }
+    
+    let description = 'Solicitação de transporte atualizada';
+    if (request_status === 'Aceito') {
+      description = 'Solicitação de transporte aceita';
+    } else if (request_status === 'Negado') {
+      description = 'Solicitação de transporte negada';
+    }
+
+    historicoModel.registrarHistorico(id, description, (err) => {
+      if (err) {
+        console.log("Erro ao registrar no histórico: ", err);
+      }
+    });
+
     return res.status(200).json({ message: 'Status de solicitação de transporte atualizada com sucesso' });
   })
 }
+
 
 module.exports = {
   getAllTransportRequests,
