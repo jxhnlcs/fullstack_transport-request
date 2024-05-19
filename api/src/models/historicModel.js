@@ -7,3 +7,14 @@ exports.registrarHistorico = (solicitacaoId, descricao, callback) => {
         callback(err);
     });
 };
+
+exports.getHistoricoBySolicitacaoId = (solicitacaoId, callback) => {
+    const query = 'SELECT * FROM TransportHistoric WHERE solicitacaoId = ? ORDER BY timestamp DESC';
+    db.query(query, [solicitacaoId], (err, results) => {
+        if (err) {
+            console.error('Erro ao consultar histórico:', err);
+            return callback(err, null);
+        }
+        return callback(null, results);
+    });
+};

@@ -4,6 +4,7 @@ const router = express.Router();
 const loginController = require('../controllers/loginController');
 const userController = require('../controllers/userController')
 const transportRequestController = require('../controllers/transportController');
+const historicController = require('../controllers/historicController');
 
 // Rotas de Login e Cadastro
 router.post('/login', loginController.fazerLogin);
@@ -24,5 +25,8 @@ router.put('/transport-requests/:id/priority', transportRequestController.update
 
 // Rota de atualização de Status 
 router.put('/transport-requests/:id/request-status', transportRequestController.updateTransportRequestStatus)
+
+// Rota para obter o histórico de uma solicitação de transporte
+router.get('/historic/:solicitacaoId', historicController.getHistoricoBySolicitacaoId);
 
 module.exports = router;
