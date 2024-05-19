@@ -22,4 +22,7 @@ router.delete('/transport-requests/:id', transportRequestController.deleteTransp
 // Rota de Priorização de Transporte
 router.put('/transport-requests/:id/priority', transportRequestController.updateTransportRequestPriority);
 
+// Rota de atualização de Status 
+router.put('/transport-requests/:id/request-status', transportRequestController.updateTransportRequestStatus)
+
 module.exports = router;

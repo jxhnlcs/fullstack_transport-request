@@ -24,10 +24,10 @@ const getTransportRequestById = (id, callback) => {
 
 const insertTransportRequest = (data, callback) => {
   const query = `
-    INSERT INTO TransportRequests (patient_name, status, priority, data, initial_point, destination_point, maqueiro_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO TransportRequests (patient_name, data, initial_point, destination_point, maqueiro_id)
+    VALUES (?, ?, ?, ?, ?)
   `;
-  const params = [data.patient_name, data.status, data.priority, data.data, data.initial_point, data.destination_point, data.maqueiro_id];
+  const params = [data.patient_name, data.data, data.initial_point, data.destination_point, data.maqueiro_id];
   db.query(query, params, (err, result) => {
     if (err) {
       console.error('Erro ao inserir solicitação de transporte:', err);
@@ -75,6 +75,17 @@ const updateTransportRequestPriority = (id, priority, callback) => {
   });
 };
 
+const updateTransportRequestStatus = (id, request_status, callback) => {
+  const query = 'UPDATE TransportRequests SET request_status = ? WHERE id = ?';
+  db.query(query, [request_status, id], (err) => {
+    if(err){
+      console.error('Erro ao atualizar o status da solicitação de transporte:', err);
+      return callback(err);
+    }
+    return callback(null);
+  })
+}
+
 module.exports = {
   getAllTransportRequests,
   getTransportRequestById,
@@ -82,4 +93,5 @@ module.exports = {
   updateTransportRequest,
   deleteTransportRequest,
   updateTransportRequestPriority,
+  updateTransportRequestStatus,
 };

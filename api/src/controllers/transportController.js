@@ -1,4 +1,5 @@
 const transportRequestModel = require('../models/transportModel');
+const historicoModel = require('../models/historicModel');
 
 const getAllTransportRequests = (req, res) => {
   transportRequestModel.getAllTransportRequests((err, requests) => {
@@ -28,6 +29,11 @@ const createTransportRequest = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Erro interno do servidor' });
     }
+    historicoModel.registrarHistorico(insertId, 'Solicitação de transporte criada', (err) => {
+      if (err) {
+        console.log("Erro ao registrar no histórico: ", err);
+      }
+    });
     return res.status(201).json({ message: 'Solicitação de transporte criada com sucesso', id: insertId });
   });
 };
@@ -56,7 +62,7 @@ const deleteTransportRequest = (req, res) => {
 const updateTransportRequestPriority = (req, res) => {
   const { id } = req.params;
   const { priority } = req.body;
-  
+
   transportRequestModel.updateTransportRequestPriority(id, priority, (err) => {
     if (err) {
       return res.status(500).json({ message: 'Erro interno do servidor' });
@@ -65,6 +71,18 @@ const updateTransportRequestPriority = (req, res) => {
   });
 };
 
+const updateTransportRequestStatus = (req, res) => {
+  const { id } = req.params;
+  const { request_status } = req.body;
+
+  transportRequestModel.updateTransportRequestStatus(id, request_status, (err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Erro interno do servidor' });
+    }
+    return res.status(200).json({ message: 'Status de solicitação de transporte atualizada com sucesso' });
+  })
+}
+
 module.exports = {
   getAllTransportRequests,
   getTransportRequestById,
@@ -72,4 +90,5 @@ module.exports = {
   updateTransportRequest,
   deleteTransportRequest,
   updateTransportRequestPriority,
+  updateTransportRequestStatus,
 };
