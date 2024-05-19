@@ -64,13 +64,6 @@ const deleteTransportRequest = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Erro interno do servidor' });
     }
-    const description = 'Solicitação de transporte deletada';
-
-    historicoModel.registrarHistorico(id, description, (err) => {
-      if (err) {
-        console.log("Erro ao registrar no histórico: ", err);
-      }
-    });
     return res.status(200).json({ message: 'Solicitação de transporte deletada com sucesso' });
   });
 };
