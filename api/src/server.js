@@ -18,5 +18,3 @@ const port = 3333;
 app.listen(port, () => {
   console.log(`API rodando com sucesso em HTTPS na porta ${port}!`);
 });
-
-/* Api desenvolvida por John Lucas */

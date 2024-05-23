@@ -22,6 +22,17 @@ const getTransportRequestById = (id, callback) => {
   });
 };
 
+const getTransportRequestsByMaqueiroId = (maqueiro_id, callback) => {
+  const query = 'SELECT * FROM TransportRequests WHERE maqueiro_id = ?';
+  db.query(query, [maqueiro_id], (err, results) => {
+    if (err) {
+      console.error('Erro ao consultar solicitações de transporte por ID do maqueiro:', err);
+      return callback(err, null);
+    }
+    return callback(null, results);
+  });
+};
+
 const insertTransportRequest = (data, callback) => {
   const query = `
     INSERT INTO TransportRequests (patient_name, data, initial_point, destination_point, maqueiro_id)
@@ -102,6 +113,7 @@ const updateTransportRequestStatus = (id, request_status, callback) => {
 module.exports = {
   getAllTransportRequests,
   getTransportRequestById,
+  getTransportRequestsByMaqueiroId,
   insertTransportRequest,
   updateTransportRequest,
   deleteTransportRequest,

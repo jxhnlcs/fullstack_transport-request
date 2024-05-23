@@ -23,6 +23,19 @@ const getTransportRequestById = (req, res) => {
   });
 };
 
+const getTransportRequestsByMaqueiroId = (req, res) => {
+  const { maqueiro_id } = req.params;
+  transportRequestModel.getTransportRequestsByMaqueiroId(maqueiro_id, (err, requests) => {
+    if (err) {
+      return res.status(500).json({ message: 'Erro interno do servidor' });
+    }
+    if (!requests || requests.length === 0) {
+      return res.status(404).json({ message: 'Nenhuma solicitação de transporte encontrada para o maqueiro especificado' });
+    }
+    return res.status(200).json(requests);
+  });
+};
+
 const createTransportRequest = (req, res) => {
   const data = req.body;
   transportRequestModel.insertTransportRequest(data, (err, insertId) => {
@@ -121,6 +134,7 @@ const updateTransportRequestStatus = (req, res) => {
 module.exports = {
   getAllTransportRequests,
   getTransportRequestById,
+  getTransportRequestsByMaqueiroId,
   createTransportRequest,
   updateTransportRequest,
   deleteTransportRequest,
