@@ -43,5 +43,7 @@ export default {
   display: flex;
 }
 
-
+.content {
+  margin: 20px;
+}
 </style>
