@@ -130,6 +130,27 @@ const updateTransportRequestStatus = (req, res) => {
   })
 }
 
+const updateTransportStatus = (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  transportRequestModel.updateTransportStatus(id, status, (err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Erro interno do servidor' });
+    }
+
+    const description = `Status de transporte atualizado para ${status}`;
+
+    historicoModel.registrarHistorico(id, description, (err) => {
+      if (err) {
+        console.log("Erro ao registrar no histórico:", err);
+      }
+    });
+
+    return res.status(200).json({ message: 'Status de transporte atualizado com sucesso' });
+  });
+};
+
 
 module.exports = {
   getAllTransportRequests,
@@ -140,4 +161,5 @@ module.exports = {
   deleteTransportRequest,
   updateTransportRequestPriority,
   updateTransportRequestStatus,
+  updateTransportStatus,
 };

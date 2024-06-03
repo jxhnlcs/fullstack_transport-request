@@ -83,17 +83,17 @@ CREATE TABLE `TransportRequests` (
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`%`*/ 
--- !50003 TRIGGER set_default_date
 
+DELIMITER //
+CREATE TRIGGER set_default_date
 BEFORE INSERT ON TransportRequests
 FOR EACH ROW
 BEGIN
   IF NEW.data IS NULL THEN
     SET NEW.data = CURDATE();
   END IF;
-END;;
+END;
+//
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;

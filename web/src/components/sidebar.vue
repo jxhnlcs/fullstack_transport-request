@@ -167,7 +167,7 @@ nav {
   position: sticky;
   top: 0;
   left: 0;
-  background-color: #274CB3;
+  background-color: #2980B9;
   height: 100vh;
   width: 16rem;
   padding: 1.8rem 0.85rem;
@@ -412,7 +412,7 @@ nav:hover .shrink-btn,
   display: flex;
   height: 40px;
   min-width: 2.4rem;
-  background-color: #082575;
+  background-color: #1a45b9;
   color: #cfcde7;
   align-items: center;
   justify-content: center;

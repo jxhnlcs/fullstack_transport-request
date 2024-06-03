@@ -110,6 +110,17 @@ const updateTransportRequestStatus = (id, request_status, callback) => {
   })
 }
 
+const updateTransportStatus = (id, status, callback) => {
+  const query = 'UPDATE TransportRequests SET status = ? WHERE id = ?';
+  db.query(query, [status, id], (err) => {
+    if (err) {
+      console.error('Erro ao atualizar o status de transporte:', err);
+      return callback(err);
+    }
+    return callback(null);
+  });
+};
+
 module.exports = {
   getAllTransportRequests,
   getTransportRequestById,
@@ -119,4 +130,5 @@ module.exports = {
   deleteTransportRequest,
   updateTransportRequestPriority,
   updateTransportRequestStatus,
+  updateTransportStatus,
 };

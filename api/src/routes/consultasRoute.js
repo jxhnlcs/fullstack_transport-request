@@ -21,6 +21,7 @@ router.get('/transport-requests/maqueiro/:maqueiro_id', transportRequestControll
 router.post('/transport-requests', transportRequestController.createTransportRequest);
 router.put('/transport-requests/:id', transportRequestController.updateTransportRequest);
 router.delete('/transport-requests/:id', transportRequestController.deleteTransportRequest);
+router.put('/transport-requests/:id/status', transportRequestController.updateTransportStatus);
 
 // Rota de Priorização de Transporte
 router.put('/transport-requests/:id/priority', transportRequestController.updateTransportRequestPriority);
