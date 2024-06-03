@@ -3,6 +3,9 @@
     <div class="sidebar">
       <Sidebar />
     </div>
+    <div class="content">
+      <h1>Dashboard</h1>
+    </div>
   </div>
 </template>
 
@@ -34,3 +37,11 @@ export default {
     },
 }
 </script>
+
+<style scoped>
+.app {
+  display: flex;
+}
+
+
+</style>
