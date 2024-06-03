@@ -1,14 +1,21 @@
 <template>
-  <div>
-    <h1>Home</h1>
+  <div class="app">
+    <div class="sidebar">
+      <Sidebar />
+    </div>
   </div>
 </template>
 
 <script>
 
+import Sidebar from '../components/sidebar.vue'
 import { jwtDecode } from 'jwt-decode';
 
 export default {
+
+  components: {
+    Sidebar,
+  },
 
   beforeRouteEnter(to, from, next) {
     const documentTitle = typeof to.meta.title === 'string' ? to.meta.title : 'Cleriston Transporte';
