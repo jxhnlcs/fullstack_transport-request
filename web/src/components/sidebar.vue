@@ -5,11 +5,8 @@
         <span class="shrink-btn" @click="toggleSidebar" ref="shrinkBtn">
           <i class="bx bx-chevron-left"></i>
         </span>
-
-        <h1 class="icon-logo">Logo</h1>
-        <h2 class="hide logomarca">Logo2</h2>
-        <!-- <img src="../assets/images/logotipo.png" class="icon-logo" alt="Logotipo">
-        <img class="hide logomarca" src="../assets/images/logomarca.png" alt="Logomarca"> -->
+        <img src="../assets/images/logo.png" class="icon-logo" alt="Logotipo">
+        <img class="hide logomarca" src="../assets/images/logomarca.png" alt="Logomarca">
       </div>
       <div class="sidebar-links">
         <ul>
