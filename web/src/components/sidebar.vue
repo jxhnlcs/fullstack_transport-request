@@ -18,7 +18,7 @@
                   <i class="bx bxs-dashboard"></i>
                   <i class="bx bxs-dashboard"></i>
                 </div>
-                <span class="link hide">Dashboard</span>
+                <span class="link hide">Painel de Controle</span>
               </a>
             </router-link>
           </li>
@@ -233,7 +233,7 @@ main .copyright span {
   top: 50%;
   height: 27px;
   padding: 0 0.3rem;
-  background-color: #274CB3;
+  background-color: #547ae5;
   border-radius: 6px;
   cursor: pointer;
   box-shadow: 0 3px 10px -3px rgba(70, 46, 118, 0.3);
@@ -409,7 +409,7 @@ nav:hover .shrink-btn,
   display: flex;
   height: 40px;
   min-width: 2.4rem;
-  background-color: #1a45b9;
+  background-color: #567be0;
   color: #cfcde7;
   align-items: center;
   justify-content: center;

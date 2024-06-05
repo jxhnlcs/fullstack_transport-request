@@ -35,6 +35,7 @@ router.get('/historic/:solicitacaoId', historicController.getHistoricoBySolicita
 //Rotas de Incidentes
 router.get('/incidents', incidentController.getAllIncidents);
 router.get('/incidents/:id', incidentController.getIncidentById);
+router.get('/incidents/maqueiro/:maqueiro_id', incidentController.getIncidentsByMaqueiroId);
 router.post('/incidents', incidentController.createIncident);
 router.put('/incidents/:id', incidentController.updateIncident);
 router.delete('/incidents/:id', incidentController.deleteIncident);

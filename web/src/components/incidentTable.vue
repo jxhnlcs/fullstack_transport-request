@@ -6,17 +6,19 @@
         <thead>
           <tr>
             <th class="rounded-tl">ID</th>
+            <th>Paciente</th>
             <th>Descrição</th>
-            <th>Data</th>
-            <th class="rounded-tr">Gravidade</th>
+            <th>Data e Hora</th>
+            <th class="rounded-tr">Maqueiro</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="incident in incidents" :key="incident.id">
             <td>{{ incident.id }}</td>
-            <td>{{ incident.description }}</td>
-            <td>{{ incident.date }}</td>
-            <td>{{ incident.severity }}</td>
+            <td>{{ incident.patient_name }}</td>
+            <td>{{ incident.descricao }}</td>
+            <td>{{ formatDate(incident.dataHora) }}</td>
+            <td>{{ incident.maqueiro_name }}</td>
           </tr>
         </tbody>
       </table>
@@ -25,32 +27,36 @@
 </template>
 
 <script>
+import axios from '@/utils/axios';
+
 export default {
   name: "IncidentTable",
   data() {
     return {
-      incidents: [
-        {
-          id: 1,
-          description: "Queda do paciente na sala de espera",
-          date: "2024-06-01",
-          severity: "Alta",
-        },
-        {
-          id: 2,
-          description: "Equipamento de maca danificado",
-          date: "2024-06-02",
-          severity: "Média",
-        },
-        {
-          id: 3,
-          description: "Atraso no transporte",
-          date: "2024-06-03",
-          severity: "Baixa",
-        },
-        // Adicione mais incidentes conforme necessário
-      ],
+      incidents: [],
     };
+  },
+  created() {
+    this.fetchIncidents();
+  },
+  methods: {
+    async fetchIncidents() {
+      try {
+        const response = await axios.get('/incidents');
+        this.incidents = response.data;
+      } catch (error) {
+        console.error('Erro ao buscar incidentes:', error);
+      }
+    },
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${day}/${month}/${year} ${hours}:${minutes}`;
+    }
   },
 };
 </script>
@@ -109,5 +115,6 @@ export default {
 
 .incident-table tr:hover {
   background-color: #f1f1f1;
+  cursor: pointer;
 }
 </style>

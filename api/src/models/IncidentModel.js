@@ -1,7 +1,16 @@
 const { db } = require('./db');
 
 const getAllIncidents = (callback) => {
-  const query = 'SELECT * FROM Incident';
+  const query = `
+    SELECT Incident.*, 
+           TransportRequests.patient_name, 
+           TransportRequests.initial_point, 
+           TransportRequests.destination_point,
+           Users.name AS maqueiro_name
+    FROM Incident
+    JOIN TransportRequests ON Incident.solicitacaoId = TransportRequests.id
+    JOIN Users ON TransportRequests.maqueiro_id = Users.id
+  `;
   db.query(query, (err, results) => {
     if (err) {
       console.error('Erro ao consultar todos os incidentes:', err);
@@ -12,13 +21,44 @@ const getAllIncidents = (callback) => {
 };
 
 const getIncidentById = (id, callback) => {
-  const query = 'SELECT * FROM Incident WHERE id = ?';
+  const query = `
+    SELECT Incident.*, 
+           TransportRequests.patient_name, 
+           TransportRequests.initial_point, 
+           TransportRequests.destination_point,
+           Users.name AS maqueiro_name
+    FROM Incident
+    JOIN TransportRequests ON Incident.solicitacaoId = TransportRequests.id
+    JOIN Users ON TransportRequests.maqueiro_id = Users.id
+    WHERE Incident.id = ?
+  `;
   db.query(query, [id], (err, result) => {
     if (err) {
       console.error('Erro ao consultar incidente por ID:', err);
       return callback(err, null);
     }
     return callback(null, result[0]);
+  });
+};
+
+const getIncidentsByMaqueiroId = (maqueiro_id, callback) => {
+  const query = `
+    SELECT Incident.*, 
+           TransportRequests.patient_name, 
+           TransportRequests.initial_point, 
+           TransportRequests.destination_point,
+           Users.name AS maqueiro_name
+    FROM Incident
+    JOIN TransportRequests ON Incident.solicitacaoId = TransportRequests.id
+    JOIN Users ON TransportRequests.maqueiro_id = Users.id
+    WHERE TransportRequests.maqueiro_id = ?
+  `;
+  db.query(query, [maqueiro_id], (err, results) => {
+    if (err) {
+      console.error('Erro ao consultar incidentes por ID do maqueiro:', err);
+      return callback(err, null);
+    }
+    return callback(null, results);
   });
 };
 
@@ -67,6 +107,7 @@ const deleteIncident = (id, callback) => {
 module.exports = {
   getAllIncidents,
   getIncidentById,
+  getIncidentsByMaqueiroId,
   createIncident,
   updateIncident,
   deleteIncident,
