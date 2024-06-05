@@ -44,7 +44,7 @@ const createTransportRequest = (req, res) => {
     }
     const description = 'Solicitação de transporte criada';
 
-    historicoModel.registrarHistorico(id, description, (err) => {
+    historicoModel.registrarHistorico(insertId, description, (err) => {
       if (err) {
         console.log("Erro ao registrar no histórico: ", err);
       }

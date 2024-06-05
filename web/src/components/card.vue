@@ -64,8 +64,8 @@ export default {
   justify-content: center;
   align-items: center;
   font-size: 30px;
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
 }
 

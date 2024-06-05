@@ -2,7 +2,7 @@
   <div class="table-container">
     <div class="header">
       <h1>Solicitações de Transporte de Maca</h1>
-      <button @click="newRequest" class="new-request-btn"><i class="bx bx-plus-medical"></i><span>Nova Solicitação</span></button>
+      <button v-if="isAdmin" @click="openModal" class="new-request-btn"><i class="bx bx-plus-medical"></i><span>Nova Solicitação</span></button>
     </div>
     <div class="table-wrapper">
       <template v-if="requests.length > 0">
@@ -10,75 +10,114 @@
           <thead>
             <tr>
               <th class="rounded-tl">ID</th>
-              <th>Nome do Paciente</th>
-              <th>Data</th>
-              <th>Destino Inicial</th>
-              <th>Destino Final</th>
+              <th>Paciente</th>
+              <th>Origem</th>
+              <th>Destino</th>
               <th>Transporte</th>
               <th>Prioridade</th>
-              <th class="rounded-tr">Status</th>
+              <th v-if="isAdmin">Status</th>
+              <th v-if="isAdmin">Maqueiro</th>
+              <th class="rounded-tr">Data</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="request in requests" :key="request.id">
               <td>{{ request.id }}</td>
               <td>{{ request.patient_name }}</td>
-              <td>{{ formatDate(request.data) }}</td>
               <td>{{ request.initial_point }}</td>
               <td>{{ request.destination_point }}</td>
               <td>{{ request.status }}</td>
               <td>{{ request.priority }}</td>
-              <td>{{ request.request_status }}</td>
+              <td v-if="isAdmin">{{ request.request_status }}</td>
+              <td v-if="isAdmin">{{ request.maqueiro_name }}</td>
+              <td>{{ formatDate(request.data) }}</td>
             </tr>
           </tbody>
         </table>
       </template>
       <template v-else>
-        <p class="no-requests-message">Não existem solicitações de transporte.</p>
+        <p>Não existem solicitações de transporte.</p>
       </template>
     </div>
+    <NewRequestModal v-if="showModal" @close="closeModal" @submit-request="createRequest" :requestData.sync="newRequestData" />
   </div>
 </template>
 
 <script>
 import axios from '@/utils/axios';
+import Swal from 'sweetalert2';
 import { jwtDecode } from 'jwt-decode';
 import Sidebar from '@/components/sidebar.vue';
+import NewRequestModal from '@/components/newRequestModal.vue';
 
 export default {
-  name: 'TransportRequests',
   components: {
     Sidebar,
+    NewRequestModal
   },
+
   data() {
     return {
       requests: [],
       maqueiro_id: null,
+      isAdmin: false,
+      showModal: false,
+      newRequestData: {
+        patient_name: '',
+        initial_point: '',
+        destination_point: '',
+        priority: 'Baixa',
+        status: 'Aguardando transporte',
+        maqueiro_id: null,
+        data: new Date().toISOString().substr(0, 10)
+      }
     };
   },
+
   created() {
     const token = localStorage.getItem('token');
     if (token) {
       const decodedToken = jwtDecode(token);
       this.maqueiro_id = decodedToken.userid;
+      this.perms = decodedToken.perms;
+      this.isAdmin = decodedToken.perms === 'Admin';
       this.fetchRequests();
     } else {
       console.log('Nenhum token encontrado no localStorage');
     }
   },
+  
   methods: {
     async fetchRequests() {
       try {
-        const response = await axios.get('/transport-requests');
+        const endpoint = this.isAdmin ? '/transport-requests' : `/transport-requests/maqueiro/${this.maqueiro_id}`;
+        const response = await axios.get(endpoint);
         this.requests = response.data;
       } catch (error) {
         console.error('Erro ao buscar solicitações de transporte:', error);
       }
     },
     
-    newRequest() {
-      // Implementação da lógica para nova solicitação
-    },
+    async createRequest() {
+    try {
+      await axios.post('/transport-requests', this.newRequestData);
+      this.closeModal();
+      this.fetchRequests();
+      this.$emit('dataUpdated');
+      Swal.fire({
+        icon: 'success',
+        title: 'Solicitação Adicionada',
+        text: 'A solicitação foi adicionada com sucesso!',
+      });
+    } catch (error) {
+      console.error('Erro ao criar nova solicitação:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: 'Houve um erro ao adicionar a solicitação. Tente novamente mais tarde.',
+      });
+    }
+  },
 
     formatDate(dateString) {
       const date = new Date(dateString);
@@ -86,7 +125,24 @@ export default {
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const year = date.getFullYear();
       return `${day}/${month}/${year}`;
-    }
+    },
+
+    openModal() {
+      this.showModal = true;
+    },
+
+    closeModal() {
+      this.showModal = false;
+      this.newRequestData = {
+        patient_name: '',
+        initial_point: '',
+        destination_point: '',
+        priority: 'Baixa',
+        status: 'Aguardando transporte',
+        maqueiro_id: null,
+        data: new Date().toISOString().substr(0, 10)
+      };
+    },
   },
 };
 </script>

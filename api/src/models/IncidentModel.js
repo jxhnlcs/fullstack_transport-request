@@ -6,6 +6,7 @@ const getAllIncidents = (callback) => {
            TransportRequests.patient_name, 
            TransportRequests.initial_point, 
            TransportRequests.destination_point,
+           TransportRequests.maqueiro_id,
            Users.name AS maqueiro_name
     FROM Incident
     JOIN TransportRequests ON Incident.solicitacaoId = TransportRequests.id
@@ -26,6 +27,7 @@ const getIncidentById = (id, callback) => {
            TransportRequests.patient_name, 
            TransportRequests.initial_point, 
            TransportRequests.destination_point,
+           TransportRequests.maqueiro_id,
            Users.name AS maqueiro_name
     FROM Incident
     JOIN TransportRequests ON Incident.solicitacaoId = TransportRequests.id
@@ -47,6 +49,7 @@ const getIncidentsByMaqueiroId = (maqueiro_id, callback) => {
            TransportRequests.patient_name, 
            TransportRequests.initial_point, 
            TransportRequests.destination_point,
+           TransportRequests.maqueiro_id,
            Users.name AS maqueiro_name
     FROM Incident
     JOIN TransportRequests ON Incident.solicitacaoId = TransportRequests.id

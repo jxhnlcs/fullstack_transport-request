@@ -1,7 +1,11 @@
 const { db } = require('./db');
 
 const getAllTransportRequests = (callback) => {
-  const query = 'SELECT * FROM TransportRequests';
+  const query = `
+    SELECT TransportRequests.*, Users.name as maqueiro_name
+    FROM TransportRequests
+    JOIN Users ON TransportRequests.maqueiro_id = Users.id
+  `;
   db.query(query, (err, results) => {
     if (err) {
       console.error('Erro ao consultar todas as solicitações de transporte:', err);
@@ -12,7 +16,12 @@ const getAllTransportRequests = (callback) => {
 };
 
 const getTransportRequestById = (id, callback) => {
-  const query = 'SELECT * FROM TransportRequests WHERE id = ?';
+  const query = `
+    SELECT TransportRequests.*, Users.name as maqueiro_name
+    FROM TransportRequests
+    JOIN Users ON TransportRequests.maqueiro_id = Users.id
+    WHERE TransportRequests.id = ?
+  `;
   db.query(query, [id], (err, results) => {
     if (err) {
       console.error('Erro ao consultar solicitação de transporte por ID:', err);
@@ -23,7 +32,12 @@ const getTransportRequestById = (id, callback) => {
 };
 
 const getTransportRequestsByMaqueiroId = (maqueiro_id, callback) => {
-  const query = 'SELECT * FROM TransportRequests WHERE maqueiro_id = ?';
+  const query = `
+    SELECT TransportRequests.*, Users.name as maqueiro_name
+    FROM TransportRequests
+    JOIN Users ON TransportRequests.maqueiro_id = Users.id
+    WHERE TransportRequests.maqueiro_id = ?
+  `;
   db.query(query, [maqueiro_id], (err, results) => {
     if (err) {
       console.error('Erro ao consultar solicitações de transporte por ID do maqueiro:', err);
@@ -34,11 +48,11 @@ const getTransportRequestsByMaqueiroId = (maqueiro_id, callback) => {
 };
 
 const insertTransportRequest = (data, callback) => {
-  const query = `
-    INSERT INTO TransportRequests (patient_name, data, initial_point, destination_point, maqueiro_id)
-    VALUES (?, ?, ?, ?, ?)
+  const query =
+    `INSERT INTO TransportRequests (patient_name, data, initial_point, destination_point, maqueiro_id, priority, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
-  const params = [data.patient_name, data.data, data.initial_point, data.destination_point, data.maqueiro_id];
+  const params = [data.patient_name, data.data, data.initial_point, data.destination_point, data.maqueiro_id, data.priority, data.status];
   db.query(query, params, (err, result) => {
     if (err) {
       console.error('Erro ao inserir solicitação de transporte:', err);
@@ -102,7 +116,7 @@ const updateTransportRequestPriority = (id, priority, callback) => {
 const updateTransportRequestStatus = (id, request_status, callback) => {
   const query = 'UPDATE TransportRequests SET request_status = ? WHERE id = ?';
   db.query(query, [request_status, id], (err) => {
-    if(err){
+    if (err) {
       console.error('Erro ao atualizar o status da solicitação de transporte:', err);
       return callback(err);
     }

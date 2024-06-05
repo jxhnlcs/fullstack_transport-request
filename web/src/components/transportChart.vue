@@ -7,12 +7,13 @@
 <script>
 import VueApexCharts from 'vue3-apexcharts';
 import axios from '@/utils/axios';
+import { jwtDecode } from 'jwt-decode';
 
 export default {
-  name: "TransportChart",
   components: {
     apexchart: VueApexCharts,
   },
+
   data() {
     return {
       series: [
@@ -46,15 +47,28 @@ export default {
           }
         }]
       },
+      maqueiro_id: null,
+      isAdmin: false,
     };
   },
+
   created() {
-    this.fetchTransportData();
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      this.maqueiro_id = decodedToken.userid;
+      this.isAdmin = decodedToken.perms === 'Admin';
+      this.fetchTransportData();
+    } else {
+      console.log('Nenhum token encontrado no localStorage');
+    }
   },
+
   methods: {
     async fetchTransportData() {
       try {
-        const response = await axios.get('/transport-requests');
+        const endpoint = this.isAdmin ? '/transport-requests' : `/transport-requests/maqueiro/${this.maqueiro_id}`;
+        const response = await axios.get(endpoint);
         const transports = response.data;
 
         const dates = [];
@@ -86,15 +100,20 @@ export default {
       return `${day}/${month}/${year}`;
     }
   },
+
+  watch: {
+    key() {
+      this.fetchTransportData();
+    }
+  },
+  
 };
 </script>
 
 <style scoped>
-
 .chart-container {
   height: 100%;
   width: 100%;
   overflow: auto;
 }
-
 </style>

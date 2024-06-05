@@ -44,8 +44,8 @@
           />
         </div>
         <div class="table-chart-container">
-          <TransportTable />
-          <TransportChart />
+          <TransportTable @dataUpdated="fetchData" />
+          <TransportChart :key="chartKey" />
         </div>
         <div class="incident-table-container">
           <IncidentTable />
@@ -89,6 +89,7 @@ export default {
       totalIncidents: 0,
       totalIncidentsPercentage: "+0%",
       maqueiro_id: null,
+      isAdmin: false,
       lastTotalTransports: 0,
       lastPendingTransports: 0,
       lastInProgressTransports: 0,
@@ -102,6 +103,8 @@ export default {
     if (token) {
       const decodedToken = jwtDecode(token);
       this.maqueiro_id = decodedToken.userid;
+      this.perms = decodedToken.perms
+      this.isAdmin = decodedToken.perms === 'Admin';
       this.fetchData();
     } else {
       console.log('Nenhum token encontrado no localStorage');
@@ -114,13 +117,15 @@ export default {
         await this.fetchTransports();
         await this.fetchIncidents();
         this.updatePercentages();
+        this.chartKey += 1;
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       }
     },
     
     async fetchTransports() {
-      const response = await axios.get('/transport-requests');
+      const endpoint = this.isAdmin ? '/transport-requests' : `/transport-requests/maqueiro/${this.maqueiro_id}`;
+      const response = await axios.get(endpoint);
       const transports = response.data;
 
       this.pendingTransports = transports.filter(transport => transport.request_status === 'Pendente').length;
@@ -130,7 +135,8 @@ export default {
     },
 
     async fetchIncidents() {
-      const response = await axios.get('/incidents');
+      const endpoint = this.isAdmin ? '/incidents' : `/incidents/maqueiro/${this.maqueiro_id}`;
+      const response = await axios.get(endpoint);
       const incidents = response.data;
       this.totalIncidents = incidents.length;
     },

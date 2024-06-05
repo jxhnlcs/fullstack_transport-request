@@ -10,18 +10,33 @@
           placeholder="Pesquisar"
         />
       </div>
+      <button v-if="isAdmin" class="add-button"><i class="bx bx-user-plus"></i></button>
     </div>
   </nav>
 </template>
 
 <script>
 
+import { jwtDecode } from 'jwt-decode';
+
 export default {
   data() {
     return {
       searchQuery: "",
+      isAdmin: false,
     };
   },
+
+  created() {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const decodedToken = jwtDecode(token);
+        this.perms = decodedToken.perms;
+        this.isAdmin = decodedToken.perms === 'Admin';
+      } else {
+        console.log('Nenhum token encontrado no localStorage');
+      }
+    },
 
   methods: {
     search() {
@@ -41,6 +56,23 @@ export default {
 .navbar-container {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+.add-button {
+  background-color: #2980B9;
+  color: rgb(255, 255, 255);
+  font-size: 20px;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px
 }
 
 .search-container {
