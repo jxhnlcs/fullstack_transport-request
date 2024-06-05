@@ -22,6 +22,13 @@
             iconBgColor="#8e44ad"
           />
           <Card
+            :value="inProgressTransports"
+            description="Transportes em Andamento"
+            :percentage="inProgressTransportsPercentage"
+            iconClass="bx-timer"
+            iconBgColor="#b0b000"
+          />
+          <Card
             :value="completedTransports"
             description="Transportes Finalizados"
             :percentage="completedTransportsPercentage"
@@ -75,6 +82,8 @@ export default {
       totalTransportsPercentage: "+0%",
       pendingTransports: 0,
       pendingTransportsPercentage: "+0%",
+      inProgressTransports: 0,
+      inProgressTransportsPercentage: "+0%",
       completedTransports: 0,
       completedTransportsPercentage: "+0%",
       totalIncidents: 0,
@@ -82,6 +91,7 @@ export default {
       maqueiro_id: null,
       lastTotalTransports: 0,
       lastPendingTransports: 0,
+      lastInProgressTransports: 0,
       lastCompletedTransports: 0,
       lastTotalIncidents: 0,
     };
@@ -114,6 +124,7 @@ export default {
       const transports = response.data;
 
       this.pendingTransports = transports.filter(transport => transport.request_status === 'Pendente').length;
+      this.inProgressTransports = transports.filter(transport => transport.status === 'Em transporte').length;
       this.completedTransports = transports.filter(transport => transport.status === 'Chegou ao destino').length;
       this.totalTransports = transports.length;
     },
@@ -127,11 +138,13 @@ export default {
     updatePercentages() {
       this.totalTransportsPercentage = this.calculatePercentageChange(this.lastTotalTransports, this.totalTransports);
       this.pendingTransportsPercentage = this.calculatePercentageChange(this.lastPendingTransports, this.pendingTransports);
+      this.inProgressTransportsPercentage = this.calculatePercentageChange(this.lastInProgressTransports, this.inProgressTransports);
       this.completedTransportsPercentage = this.calculatePercentageChange(this.lastCompletedTransports, this.completedTransports);
       this.totalIncidentsPercentage = this.calculatePercentageChange(this.lastTotalIncidents, this.totalIncidents);
 
       this.lastTotalTransports = this.totalTransports;
       this.lastPendingTransports = this.pendingTransports;
+      this.inProgressTransports = this.inProgressTransports;
       this.lastCompletedTransports = this.completedTransports;
       this.lastTotalIncidents = this.totalIncidents;
     },

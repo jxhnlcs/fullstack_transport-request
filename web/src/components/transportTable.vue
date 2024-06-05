@@ -14,6 +14,7 @@
               <th>Data</th>
               <th>Destino Inicial</th>
               <th>Destino Final</th>
+              <th>Transporte</th>
               <th>Prioridade</th>
               <th class="rounded-tr">Status</th>
             </tr>
@@ -25,6 +26,7 @@
               <td>{{ formatDate(request.data) }}</td>
               <td>{{ request.initial_point }}</td>
               <td>{{ request.destination_point }}</td>
+              <td>{{ request.status }}</td>
               <td>{{ request.priority }}</td>
               <td>{{ request.request_status }}</td>
             </tr>
