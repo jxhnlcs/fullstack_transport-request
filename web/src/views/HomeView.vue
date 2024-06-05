@@ -220,6 +220,14 @@ export default {
   flex-direction: column;
 }
 
+.table-chart-container > :first-child {
+  flex: 1.55;
+}
+
+.table-chart-container > :last-child {
+  flex: 1;
+}
+
 .incident-table-container {
   margin-top: 20px;
   flex-grow: 1;
