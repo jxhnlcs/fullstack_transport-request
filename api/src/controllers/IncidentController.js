@@ -35,6 +35,16 @@ const getIncidentsByMaqueiroId = (req, res) => {
   });
 };
 
+const getIncidentsBySolicitacaoId = (req, res) => {
+  const solicitacaoId = req.params.solicitacaoId;
+  incidentModel.getIncidentsBySolicitacaoId(solicitacaoId, (err, incidents) => {
+    if (err) {
+      return res.status(500).json({ error: 'Erro ao consultar incidentes por ID da solicitação' });
+    }
+    return res.json(incidents);
+  });
+};
+
 const createIncident = (req, res) => {
   const data = req.body;
   incidentModel.createIncident(data, (err, insertId) => {
@@ -70,6 +80,7 @@ module.exports = {
   getAllIncidents,
   getIncidentById,
   getIncidentsByMaqueiroId,
+  getIncidentsBySolicitacaoId,
   createIncident,
   updateIncident,
   deleteIncident,

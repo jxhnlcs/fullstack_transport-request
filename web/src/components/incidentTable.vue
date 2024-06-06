@@ -10,7 +10,7 @@
               <th>Paciente</th>
               <th>Descrição</th>
               <th>Data e Hora</th>
-              <th class="rounded-tr">Maqueiro</th>
+              <th v-if="isAdmin" class="rounded-tr">Maqueiro</th>
             </tr>
           </thead>
           <tbody>
@@ -19,13 +19,13 @@
               <td>{{ incident.patient_name }}</td>
               <td>{{ incident.descricao }}</td>
               <td>{{ formatDate(incident.dataHora) }}</td>
-              <td>{{ incident.maqueiro_name }}</td>
+              <td v-if="isAdmin">{{ incident.maqueiro_name }}</td>
             </tr>
           </tbody>
         </table>
       </template>
       <template v-else>
-        <p>Não há incidentes para este maqueiro.</p>
+        <p style="margin-top: 10px;">Não há incidentes para este maqueiro.</p>
       </template>
     </div>
   </div>
@@ -36,6 +36,15 @@ import axios from '@/utils/axios';
 import { jwtDecode } from 'jwt-decode';
 
 export default {
+
+  props: ['incidentDataUpdated'],
+
+  watch: {
+    incidentDataUpdated() {
+      this.fetchIncidents();
+    }
+  },
+
   data() {
     return {
       incidents: [],
@@ -61,6 +70,7 @@ export default {
   methods: {
     async fetchIncidents() {
       try {
+        console.log("fazendo fetch")
         const endpoint = this.isAdmin ? '/incidents' : `/incidents/maqueiro/${this.maqueiro_id}`;
         const response = await axios.get(endpoint);
         this.incidents = response.data;

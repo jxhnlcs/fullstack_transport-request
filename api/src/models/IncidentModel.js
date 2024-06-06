@@ -65,6 +65,28 @@ const getIncidentsByMaqueiroId = (maqueiro_id, callback) => {
   });
 };
 
+const getIncidentsBySolicitacaoId = (solicitacaoId, callback) => {
+  const query = `
+    SELECT Incident.*, 
+           TransportRequests.patient_name, 
+           TransportRequests.initial_point, 
+           TransportRequests.destination_point,
+           TransportRequests.maqueiro_id,
+           Users.name AS maqueiro_name
+    FROM Incident
+    JOIN TransportRequests ON Incident.solicitacaoId = TransportRequests.id
+    JOIN Users ON TransportRequests.maqueiro_id = Users.id
+    WHERE Incident.solicitacaoId = ?
+  `;
+  db.query(query, [solicitacaoId], (err, results) => {
+    if (err) {
+      console.error('Erro ao consultar incidentes por ID da solicitação:', err);
+      return callback(err, null);
+    }
+    return callback(null, results);
+  });
+};
+
 const createIncident = (data, callback) => {
   const query = `
     INSERT INTO Incident (solicitacaoId, descricao, dataHora)
@@ -111,7 +133,9 @@ module.exports = {
   getAllIncidents,
   getIncidentById,
   getIncidentsByMaqueiroId,
+  getIncidentsBySolicitacaoId,
   createIncident,
   updateIncident,
   deleteIncident,
+ 
 };

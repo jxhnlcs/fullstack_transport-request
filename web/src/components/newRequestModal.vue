@@ -2,37 +2,22 @@
   <div class="modal">
     <div class="modal-content">
       <span class="close" @click="$emit('close')">&times;</span>
-      <h2>Nova Solicitação de Transporte</h2>
+      <h2>{{ isEditMode ? 'Editando Solicitação de Transporte' : 'Nova Solicitação de Transporte' }}</h2>
       <form @submit.prevent="submitRequest">
         <div class="form-row">
           <div class="form-group">
-            <label for="patient_name">Paciente</label>
-            <input
-              type="text"
-              id="patient_name"
-              v-model="requestData.patient_name"
-              required
-            />
+            <label for="patient_name">Nome do Paciente</label>
+            <input type="text" id="patient_name" v-model="requestData.patient_name" required>
           </div>
           <div class="form-group">
             <label for="initial_point">Origem</label>
-            <input
-              type="text"
-              id="initial_point"
-              v-model="requestData.initial_point"
-              required
-            />
+            <input type="text" id="initial_point" v-model="requestData.initial_point" required>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label for="destination_point">Destino</label>
-            <input
-              type="text"
-              id="destination_point"
-              v-model="requestData.destination_point"
-              required
-            />
+            <input type="text" id="destination_point" v-model="requestData.destination_point" required>
           </div>
           <div class="form-group">
             <label for="priority">Prioridade</label>
@@ -47,9 +32,7 @@
           <div class="form-group">
             <label for="status">Status</label>
             <select id="status" v-model="requestData.status" required>
-              <option value="Aguardando transporte">
-                Aguardando transporte
-              </option>
+              <option value="Aguardando transporte">Aguardando transporte</option>
               <option value="Em transporte">Em transporte</option>
               <option value="Chegou ao destino">Chegou ao destino</option>
             </select>
@@ -57,69 +40,82 @@
           <div class="form-group">
             <label for="maqueiro_id">Maqueiro</label>
             <select id="maqueiro_id" v-model="requestData.maqueiro_id" required>
-              <option
-                v-for="maqueiro in maqueiros"
-                :key="maqueiro.id"
-                :value="maqueiro.id"
-              >
+              <option v-for="maqueiro in maqueiros" :key="maqueiro.id" :value="maqueiro.id">
                 {{ maqueiro.name }}
               </option>
             </select>
           </div>
         </div>
-        <div class="form-group">
-          <label for="data">Data</label>
-          <input type="date" id="data" v-model="requestData.data" required />
+        <div class="form-row">
+          <div class="form-group">
+            <label for="data">Data</label>
+            <input type="date" id="data" v-model="requestData.data" required>
+          </div>
         </div>
-        <button type="submit" class="submit-btn">Criar Solicitação</button>
+        <div class="modal-actions">
+          <button type="submit" class="submit-btn">{{ isEditMode ? 'Atualizar Solicitação' : 'Criar Solicitação' }}</button>
+          <button v-if="isEditMode" type="button" class="delete-btn" @click="confirmDelete">Deletar Solicitação</button>
+        </div>
       </form>
     </div>
   </div>
 </template>
 
 <script>
-import axios from "@/utils/axios";
+import axios from '@/utils/axios';
+import Swal from 'sweetalert2';
 
 export default {
   props: {
     requestData: {
       type: Object,
-      required: true,
+      required: true
     },
+    isEditMode: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
-      maqueiros: [],
+      maqueiros: []
     };
   },
   created() {
     this.fetchMaqueiros();
-    this.setDefaultDate();
   },
   methods: {
     async fetchMaqueiros() {
       try {
-        const response = await axios.get("/users");
-        this.maqueiros = response.data.filter(
-          (user) => user.role === "Maqueiro"
-        );
+        const response = await axios.get('/users');
+        this.maqueiros = response.data.filter(user => user.role === 'Maqueiro');
       } catch (error) {
-        console.error("Erro ao buscar maqueiros:", error);
-      }
-    },
-    setDefaultDate() {
-      const today = new Date().toISOString().substr(0, 10);
-      if (!this.requestData.data) {
-        this.$emit("update:requestData", { ...this.requestData, data: today });
+        console.error('Erro ao buscar maqueiros:', error);
       }
     },
     submitRequest() {
-      if (!this.requestData.data) {
-        this.setDefaultDate();
-      }
-      this.$emit("submit-request");
+      this.$emit('submit-request');
     },
-  },
+    confirmDelete() {
+      Swal.fire({
+        title: 'Tem certeza?',
+        text: 'Você não poderá reverter isso!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sim, deletar!',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.deleteRequest();
+        }
+      });
+    },
+    deleteRequest() {
+      this.$emit('delete-request', this.requestData.id);
+    }
+  }
 };
 </script>
 
@@ -143,7 +139,7 @@ export default {
   padding: 30px;
   border-radius: 15px;
   width: 80%;
-  max-width: 500px;
+  max-width: 600px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   position: relative;
 }
@@ -172,14 +168,15 @@ h2 {
   text-align: center;
 }
 
+.form-group {
+  margin-bottom: 20px;
+  width: calc(50% - 10px);
+  display: inline-block;
+}
+
 .form-row {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
-}
-
-.form-group {
-  flex: 1;
   margin-bottom: 20px;
 }
 
@@ -204,15 +201,14 @@ h2 {
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #2980b9;
+  border-color: #2980B9;
 }
 
 .submit-btn {
-  width: 100%;
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  background-color: #2980b9;
+  background-color: #2980B9;
   color: white;
   font-size: 16px;
   cursor: pointer;
@@ -221,5 +217,27 @@ h2 {
 .submit-btn:hover {
   background-color: #1a5a7f;
   transition: background-color 0.3s ease;
+}
+
+.delete-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #e74c3c;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+  transition: background-color 0.3s ease;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
 </style>
