@@ -13,6 +13,7 @@
     "core-js": "^3.8.3",
     "jwt-decode": "^4.0.0",
     "mitt": "^3.0.1",
+    "moment-timezone": "^0.5.45",
     "sweetalert2": "^11.11.0",
     "vue": "^3.2.13",
     "vue-apexcharts": "^1.6.2",

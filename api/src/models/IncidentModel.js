@@ -1,4 +1,12 @@
 const { db } = require('./db');
+const moment = require('moment-timezone');
+
+const adjustIncidentTimes = (incidents) => {
+  return incidents.map(incident => {
+    incident.dataHora = moment(incident.dataHora).subtract(3, 'hours').format('YYYY-MM-DD HH:mm:ss');
+    return incident;
+  });
+};
 
 const getAllIncidents = (callback) => {
   const query = `
@@ -17,7 +25,8 @@ const getAllIncidents = (callback) => {
       console.error('Erro ao consultar todos os incidentes:', err);
       return callback(err, null);
     }
-    return callback(null, results);
+    const adjustedResults = adjustIncidentTimes(results);
+    return callback(null, adjustedResults);
   });
 };
 
@@ -61,7 +70,8 @@ const getIncidentsByMaqueiroId = (maqueiro_id, callback) => {
       console.error('Erro ao consultar incidentes por ID do maqueiro:', err);
       return callback(err, null);
     }
-    return callback(null, results);
+    const adjustedResults = adjustIncidentTimes(results);
+    return callback(null, adjustedResults);
   });
 };
 
@@ -83,7 +93,8 @@ const getIncidentsBySolicitacaoId = (solicitacaoId, callback) => {
       console.error('Erro ao consultar incidentes por ID da solicitação:', err);
       return callback(err, null);
     }
-    return callback(null, results);
+    const adjustedResults = adjustIncidentTimes(results);
+    return callback(null, adjustedResults);
   });
 };
 

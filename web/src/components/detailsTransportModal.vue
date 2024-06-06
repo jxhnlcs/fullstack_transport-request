@@ -82,7 +82,7 @@
           <tbody>
             <tr v-for="incident in incidents" :key="incident.id">
               <td>{{ incident.descricao }}</td>
-              <td>{{ formatDate(incident.dataHora) }}</td>
+              <td>{{ formatDateHour(incident.dataHora) }}</td>
             </tr>
           </tbody>
         </table>
@@ -92,7 +92,7 @@
         <div v-for="historic in historics" :key="historic.id" class="timeline-item">
           <i class="bx bx-timer"></i>
           <div class="timeline-content">
-            <span>{{ formatDate(historic.timestamp) }}</span>
+            <span>{{ formatDateHour(historic.timestamp) }}</span>
             <p>{{ historic.descricao }}</p>
           </div>
         </div>
@@ -104,6 +104,7 @@
 <script>
 import axios from "@/utils/axios";
 import Swal from "sweetalert2";
+import moment from "moment-timezone";
 
 export default {
   props: {
@@ -255,16 +256,11 @@ export default {
       }
     },
     formatDate(dateString) {
-      const date = new Date(dateString);
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      const hours = String(date.getHours()).padStart(2, "0");
-      const minutes = String(date.getMinutes()).padStart(2, "0");
-      const seconds = String(date.getSeconds()).padStart(2, "0");
-      return `${day}/${month}/${year} - ${hours}:${minutes}:${seconds}`;
+      return moment(dateString).tz("America/Sao_Paulo").format("DD/MM/YYYY");
     },
-
+    formatDateHour(dateString) {
+      return moment(dateString).tz("America/Sao_Paulo").format("DD/MM/YYYY - HH:mm:ss");
+    },
     changePriority() {
       // Lógica para alterar prioridade
       Swal.fire({
