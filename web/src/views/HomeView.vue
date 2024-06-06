@@ -44,7 +44,7 @@
           />
         </div>
         <div class="table-chart-container">
-          <TransportTable @incidentReported="handleIncidentReported" @dataUpdated="fetchData" />
+          <TransportTable @incidentReported="handleIncidentReported" @dataUpdated="handleIncidentReported" />
           <TransportChart :key="chartKey" />
         </div>
         <div class="incident-table-container">
@@ -114,6 +114,7 @@ export default {
   methods: {
 
     handleIncidentReported() {
+      this.fetchData();
       this.fetchIncidents();
       this.incidentDataUpdated = !this.incidentDataUpdated;
     },

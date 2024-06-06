@@ -140,6 +140,17 @@ const deleteIncident = (id, callback) => {
   });
 };
 
+const deleteIncidentsBySolicitacaoId = (solicitacaoId, callback) => {
+  const query = 'DELETE FROM Incident WHERE solicitacaoId = ?';
+  db.query(query, [solicitacaoId], (err) => {
+    if (err) {
+      console.error('Erro ao deletar incidentes por ID da solicitação:', err);
+      return callback(err);
+    }
+    return callback(null);
+  });
+};
+
 module.exports = {
   getAllIncidents,
   getIncidentById,
@@ -148,5 +159,5 @@ module.exports = {
   createIncident,
   updateIncident,
   deleteIncident,
- 
+  deleteIncidentsBySolicitacaoId,
 };

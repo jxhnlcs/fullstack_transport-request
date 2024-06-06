@@ -1,5 +1,6 @@
 const transportRequestModel = require('../models/transportModel');
 const historicoModel = require('../models/historicModel');
+const incidentModel = require('../models/IncidentModel');
 
 const getAllTransportRequests = (req, res) => {
   transportRequestModel.getAllTransportRequests((err, requests) => {
@@ -71,14 +72,33 @@ const updateTransportRequest = (req, res) => {
   });
 };
 
-const deleteTransportRequest = (req, res) => {
+const deleteTransportRequest = async (req, res) => {
   const { id } = req.params;
-  transportRequestModel.deleteTransportRequest(id, (err) => {
-    if (err) {
-      return res.status(500).json({ message: 'Erro interno do servidor' });
-    }
-    return res.status(200).json({ message: 'Solicitação de transporte deletada com sucesso' });
-  });
+
+  try {
+    await new Promise((resolve, reject) => {
+      incidentModel.deleteIncidentsBySolicitacaoId(id, (err) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve();
+      });
+    });
+
+    await new Promise((resolve, reject) => {
+      transportRequestModel.deleteTransportRequest(id, (err) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve();
+      });
+    });
+
+    res.status(200).json({ message: 'Solicitação de transporte deletada com sucesso' });
+  } catch (err) {
+    console.error('Erro ao deletar solicitação de transporte:', err);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
 };
 
 const updateTransportRequestPriority = (req, res) => {
