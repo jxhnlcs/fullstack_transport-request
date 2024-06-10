@@ -44,7 +44,10 @@
           />
         </div>
         <div class="table-chart-container">
-          <TransportTable @incidentReported="handleIncidentReported" @dataUpdated="handleIncidentReported" />
+          <TransportTable
+            @incidentReported="handleIncidentReported"
+            @dataUpdated="handleIncidentReported"
+          />
           <TransportChart :key="chartKey" />
         </div>
         <div class="incident-table-container">
@@ -56,14 +59,14 @@
 </template>
 
 <script>
-import axios from "@/utils/axios";
-import Sidebar from "@/components/sidebar.vue";
-import Navbar from "@/components/navbar.vue";
-import Card from "@/components/card.vue";
-import TransportTable from "@/components/transportTable.vue";
-import TransportChart from "@/components/transportChart.vue";
-import IncidentTable from "@/components/incidentTable.vue";
-import { jwtDecode } from "jwt-decode";
+import axios from '@/utils/axios'
+import Sidebar from '@/components/sidebar.vue'
+import Navbar from '@/components/navbar.vue'
+import Card from '@/components/card.vue'
+import TransportTable from '@/components/transportTable.vue'
+import TransportChart from '@/components/transportChart.vue'
+import IncidentTable from '@/components/incidentTable.vue'
+import { jwtDecode } from 'jwt-decode'
 
 export default {
   components: {
@@ -78,15 +81,15 @@ export default {
   data() {
     return {
       totalTransports: 0,
-      totalTransportsPercentage: "+0%",
+      totalTransportsPercentage: '+0%',
       pendingTransports: 0,
-      pendingTransportsPercentage: "+0%",
+      pendingTransportsPercentage: '+0%',
       inProgressTransports: 0,
-      inProgressTransportsPercentage: "+0%",
+      inProgressTransportsPercentage: '+0%',
       completedTransports: 0,
-      completedTransportsPercentage: "+0%",
+      completedTransportsPercentage: '+0%',
       totalIncidents: 0,
-      totalIncidentsPercentage: "+0%",
+      totalIncidentsPercentage: '+0%',
       maqueiro_id: null,
       isAdmin: false,
       lastTotalTransports: 0,
@@ -95,120 +98,127 @@ export default {
       lastCompletedTransports: 0,
       lastTotalIncidents: 0,
       incidentDataUpdated: false,
-    };
+    }
   },
 
   created() {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token')
     if (token) {
-      const decodedToken = jwtDecode(token);
-      this.maqueiro_id = decodedToken.userid;
-      this.perms = decodedToken.perms;
-      this.isAdmin = decodedToken.perms === "Admin";
-      this.fetchData();
+      const decodedToken = jwtDecode(token)
+      this.maqueiro_id = decodedToken.userid
+      this.perms = decodedToken.perms
+      this.isAdmin = decodedToken.perms === 'Admin'
+      this.fetchData()
     } else {
-      console.log("Nenhum token encontrado no localStorage");
+      console.log('Nenhum token encontrado no localStorage')
     }
   },
 
   methods: {
-
     handleIncidentReported() {
-      this.fetchData();
-      this.fetchIncidents();
-      this.incidentDataUpdated = !this.incidentDataUpdated;
+      this.fetchData()
+      this.fetchIncidents()
+      this.incidentDataUpdated = !this.incidentDataUpdated
     },
 
     async fetchData() {
       try {
-        await this.fetchTransports();
-        await this.fetchIncidents();
-        this.updatePercentages();
-        this.chartKey += 1;
+        await this.fetchTransports()
+        await this.fetchIncidents()
+        this.updatePercentages()
+        this.chartKey += 1
       } catch (error) {
-        console.error("Erro ao buscar dados:", error);
+        console.error('Erro ao buscar dados:', error)
       }
     },
 
     async fetchTransports() {
       const endpoint = this.isAdmin
-        ? "/transport-requests"
-        : `/transport-requests/maqueiro/${this.maqueiro_id}`;
-      const response = await axios.get(endpoint);
-      const transports = response.data;
+        ? '/transport-requests'
+        : `/transport-requests/maqueiro/${this.maqueiro_id}`
+      const response = await axios.get(endpoint)
+      const transports = response.data
 
       this.pendingTransports = transports.filter(
-        (transport) => transport.request_status === "Pendente"
-      ).length;
+        transport => transport.request_status === 'Pendente'
+      ).length
       this.inProgressTransports = transports.filter(
-        (transport) => transport.status === "Em transporte"
-      ).length;
+        transport => transport.status === 'Em transporte'
+      ).length
       this.completedTransports = transports.filter(
-        (transport) => transport.status === "Chegou ao destino"
-      ).length;
-      this.totalTransports = transports.length;
+        transport => transport.status === 'Chegou ao destino'
+      ).length
+      this.totalTransports = transports.length
     },
 
     async fetchIncidents() {
-      const endpoint = this.isAdmin
-        ? "/incidents"
-        : `/incidents/maqueiro/${this.maqueiro_id}`;
-      const response = await axios.get(endpoint);
-      const incidents = response.data;
-      this.totalIncidents = incidents.length;
+      try {
+        const endpoint = this.isAdmin
+          ? '/incidents'
+          : `/incidents/maqueiro/${this.maqueiro_id}`
+        const response = await axios.get(endpoint)
+        const incidents = response.data
+        this.totalIncidents = incidents.length
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          console.log(
+            'Nenhum incidente encontrado para o maqueiro especificado'
+          )
+        } else {
+          console.error('Erro ao buscar incidentes:', error)
+        }
+      }
     },
 
     updatePercentages() {
       this.totalTransportsPercentage = this.calculatePercentageChange(
         this.lastTotalTransports,
         this.totalTransports
-      );
+      )
       this.pendingTransportsPercentage = this.calculatePercentageChange(
         this.lastPendingTransports,
         this.pendingTransports
-      );
+      )
       this.inProgressTransportsPercentage = this.calculatePercentageChange(
         this.lastInProgressTransports,
         this.inProgressTransports
-      );
+      )
       this.completedTransportsPercentage = this.calculatePercentageChange(
         this.lastCompletedTransports,
         this.completedTransports
-      );
+      )
       this.totalIncidentsPercentage = this.calculatePercentageChange(
         this.lastTotalIncidents,
         this.totalIncidents
-      );
+      )
 
-      this.lastTotalTransports = this.totalTransports;
-      this.lastPendingTransports = this.pendingTransports;
-      this.inProgressTransports = this.inProgressTransports;
-      this.lastCompletedTransports = this.completedTransports;
-      this.lastTotalIncidents = this.totalIncidents;
+      this.lastTotalTransports = this.totalTransports
+      this.lastPendingTransports = this.pendingTransports
+      this.inProgressTransports = this.inProgressTransports
+      this.lastCompletedTransports = this.completedTransports
+      this.lastTotalIncidents = this.totalIncidents
     },
 
     calculatePercentageChange(oldValue, newValue) {
       if (oldValue === 0) {
-        return newValue > 0 ? `+${newValue}` : "0%";
+        return newValue > 0 ? `+${newValue}` : '0%'
       }
-      const change = ((newValue - oldValue) / oldValue) * 100;
-      return change > 0 ? `+${change.toFixed(1)}%` : `${change.toFixed(1)}%`;
+      const change = ((newValue - oldValue) / oldValue) * 100
+      return change > 0 ? `+${change.toFixed(1)}%` : `${change.toFixed(1)}%`
     },
   },
 
   beforeRouteEnter(to, from, next) {
     const documentTitle =
-      typeof to.meta.title === "string"
-        ? to.meta.title
-        : "Cleriston Transporte";
-    document.title = documentTitle;
-    next();
+      typeof to.meta.title === 'string' ? to.meta.title : 'Cleriston Transporte'
+    document.title = documentTitle
+    next()
   },
 
   incidentDataUpdated() {
-    this.fetchIncidents();
+    this.fetchIncidents()
   },
-};
+}
 </script>
 
 <style scoped>

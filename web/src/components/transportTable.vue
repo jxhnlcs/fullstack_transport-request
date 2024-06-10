@@ -1,7 +1,7 @@
 <template>
   <div class="table-container">
     <div class="header">
-      <h1>Solicitações de Transporte de Maca</h1>
+      <h1>Solicitações de Transporte</h1>
       <button v-if="isAdmin" @click="openNewRequestModal" class="new-request-btn">
         <i class="bx bx-plus-medical"></i><span>Nova Solicitação</span>
       </button>

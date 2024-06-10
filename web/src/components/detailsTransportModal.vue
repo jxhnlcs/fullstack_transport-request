@@ -57,8 +57,19 @@
         >
           Relatar Incidente
         </button>
-        <button @click="changePriority" class="priority-btn">
+        <button @click="togglePriorityForm" class="priority-btn">
           Alterar Prioridade
+        </button>
+      </div>
+      <div v-if="showPriorityForm" class="priority-form">
+        <label for="priority">Nova Prioridade:</label>
+        <select v-model="newPriority" id="priority">
+          <option value="Baixa">Baixa</option>
+          <option value="Média">Média</option>
+          <option value="Alta">Alta</option>
+        </select>
+        <button @click="submitPriorityChange" class="submit-priority-btn">
+          Confirmar
         </button>
       </div>
       <div v-if="showIncidentForm" class="incident-form">
@@ -116,6 +127,8 @@ export default {
   data() {
     return {
       showIncidentForm: false,
+      showPriorityForm: false,
+      newPriority: this.requestData.priority,
       incidentDescription: "",
       incidents: [],
       historics: [],
@@ -240,7 +253,6 @@ export default {
           `/incidents/solicitacao/${this.requestData.id}`
         );
         this.incidents = response.data;
-        console.log(this.incidents);
       } catch (error) {
         console.error("Erro ao buscar incidentes:", error);
       }
@@ -261,13 +273,31 @@ export default {
     formatDateHour(dateString) {
       return moment(dateString).tz("America/Sao_Paulo").format("DD/MM/YYYY - HH:mm:ss");
     },
-    changePriority() {
-      // Lógica para alterar prioridade
-      Swal.fire({
-        icon: "info",
-        title: "Alterar Prioridade",
-        text: "Funcionalidade de alteração de prioridade ainda não implementada.",
-      });
+    togglePriorityForm() {
+      this.showPriorityForm = !this.showPriorityForm;
+    },
+    async submitPriorityChange() {
+      try {
+        await axios.put(`/transport-requests/${this.requestData.id}/priority`, {
+          priority: this.newPriority,
+        });
+        this.requestData.priority = this.newPriority;
+        this.showPriorityForm = false;
+        this.fetchHistorics();
+        this.$emit("dataUpdated");
+        Swal.fire({
+          icon: "success",
+          title: "Prioridade Alterada",
+          text: "A prioridade foi alterada com sucesso!",
+        });
+      } catch (error) {
+        console.error("Erro ao alterar a prioridade:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Erro",
+          text: "Houve um erro ao alterar a prioridade. Tente novamente mais tarde.",
+        });
+      }
     },
   },
 };
@@ -400,6 +430,8 @@ h2 {
 
 .incident-list {
   margin-top: 20px;
+  max-height: 15vh; /* Defina a altura máxima aqui */
+  overflow-y: auto;
 }
 
 .incident-list h3 {
@@ -425,6 +457,8 @@ h2 {
 
 .history-timeline {
   margin-top: 20px;
+  max-height: 20vh; /* Defina a altura máxima aqui */
+  overflow-y: auto; /* Adicione rolagem vertical */
 }
 
 .history-timeline h3 {
@@ -447,4 +481,36 @@ h2 {
   display: flex;
   flex-direction: column;
 }
+
+.priority-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.priority-form label {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.priority-form select {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.priority-form .submit-priority-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #2980b9;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
 </style>

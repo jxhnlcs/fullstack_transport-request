@@ -70,7 +70,6 @@ export default {
   methods: {
     async fetchIncidents() {
       try {
-        console.log("fazendo fetch")
         const endpoint = this.isAdmin ? '/incidents' : `/incidents/maqueiro/${this.maqueiro_id}`;
         const response = await axios.get(endpoint);
         this.incidents = response.data;

@@ -7,7 +7,6 @@
           id="search"
           v-model="searchQuery"
           @input="search"
-          placeholder="Pesquisar"
         />
       </div>
       <button v-if="isAdmin" class="add-button"><i class="bx bx-user-plus"></i></button>
@@ -91,7 +90,7 @@ input {
   padding: 10px;
   border-radius: 16px;
   outline: none;
-  background-color: #ebebeb;
+  background-color: #ffffff;
   border: none;
 }
 

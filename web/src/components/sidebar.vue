@@ -409,7 +409,7 @@ nav:hover .shrink-btn,
   display: flex;
   height: 40px;
   min-width: 2.4rem;
-  background-color: #567be0;
+  background-color: rgb(34, 69, 165);
   color: #cfcde7;
   align-items: center;
   justify-content: center;
