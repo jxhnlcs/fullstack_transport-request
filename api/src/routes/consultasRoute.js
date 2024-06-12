@@ -1,44 +1,53 @@
 const express = require('express');
-const router = express.Router();
+const LoginController = require('../controllers/loginController');
+const UserController = require('../controllers/userController');
+const TransportController = require('../controllers/transportController');
+const HistoricController = require('../controllers/historicController');
+const IncidentController = require('../controllers/IncidentController');
 
-const loginController = require('../controllers/loginController');
-const userController = require('../controllers/userController')
-const transportRequestController = require('../controllers/transportController');
-const historicController = require('../controllers/historicController');
-const incidentController = require('../controllers/IncidentController');
+class ConsultasRoute {
+  constructor() {
+    this.router = express.Router();
+    this.initializeRoutes();
+  }
 
-// Rotas de Login e Cadastro
-router.post('/login', loginController.fazerLogin);
-router.post('/register', loginController.cadastrarUsuario);
+  initializeRoutes() {
+    // Rotas de Login e Cadastro
+    this.router.post('/login', (req, res) => LoginController.fazerLogin(req, res));
+    this.router.post('/register', (req, res) => LoginController.cadastrarUsuario(req, res));
 
-//Rota de Usuários
-router.get('/users', userController.getAllUsers);
+    // Rota de Usuários
+    this.router.get('/users', (req, res) => UserController.getAllUsers(req, res));
 
-// Rota de Solicitações de Transporte
-router.get('/transport-requests', transportRequestController.getAllTransportRequests);
-router.get('/transport-requests/:id', transportRequestController.getTransportRequestById);
-router.get('/transport-requests/maqueiro/:maqueiro_id', transportRequestController.getTransportRequestsByMaqueiroId);
-router.post('/transport-requests', transportRequestController.createTransportRequest);
-router.put('/transport-requests/:id', transportRequestController.updateTransportRequest);
-router.delete('/transport-requests/:id', transportRequestController.deleteTransportRequest);
-router.put('/transport-requests/:id/status', transportRequestController.updateTransportStatus);
+    // Rota de Solicitações de Transporte
+    this.router.get('/transport-requests', (req, res) => TransportController.getAllTransportRequests(req, res));
+    this.router.get('/transport-requests/:id', (req, res) => TransportController.getTransportRequestById(req, res));
+    this.router.get('/transport-requests/maqueiro/:maqueiro_id', (req, res) => TransportController.getTransportRequestsByMaqueiroId(req, res));
+    this.router.post('/transport-requests', (req, res) => TransportController.createTransportRequest(req, res));
+    this.router.put('/transport-requests/:id', (req, res) => TransportController.updateTransportRequest(req, res));
+    this.router.delete('/transport-requests/:id', (req, res) => TransportController.deleteTransportRequest(req, res));
+    this.router.put('/transport-requests/:id/status', (req, res) => TransportController.updateTransportStatus(req, res));
 
-// Rota de Priorização de Transporte
-router.put('/transport-requests/:id/priority', transportRequestController.updateTransportRequestPriority);
+    // Rota de Priorização de Transporte
+    this.router.put('/transport-requests/:id/priority', (req, res) => TransportController.updateTransportRequestPriority(req, res));
 
-// Rota de atualização de Status 
-router.put('/transport-requests/:id/request-status', transportRequestController.updateTransportRequestStatus)
+    // Rota de atualização de Status 
+    this.router.put('/transport-requests/:id/request-status', (req, res) => TransportController.updateTransportRequestStatus(req, res));
 
-// Rota para obter o histórico de uma solicitação de transporte
-router.get('/historic/:solicitacaoId', historicController.getHistoricoBySolicitacaoId);
+    // Rota para obter o histórico de uma solicitação de transporte
+    this.router.get('/historic/:solicitacaoId', (req, res) => HistoricController.getHistoricoBySolicitacaoId(req, res));
+    this.router.post('/historic', (req, res) => HistoricController.registrarHistorico(req, res));
 
-//Rotas de Incidentes
-router.get('/incidents', incidentController.getAllIncidents);
-router.get('/incidents/:id', incidentController.getIncidentById);
-router.get('/incidents/maqueiro/:maqueiro_id', incidentController.getIncidentsByMaqueiroId);
-router.get('/incidents/solicitacao/:solicitacaoId', incidentController.getIncidentsBySolicitacaoId);
-router.post('/incidents', incidentController.createIncident);
-router.put('/incidents/:id', incidentController.updateIncident);
-router.delete('/incidents/:id', incidentController.deleteIncident);
+    // Rotas de Incidentes
+    this.router.get('/incidents', (req, res) => IncidentController.getAllIncidents(req, res));
+    this.router.get('/incidents/:id', (req, res) => IncidentController.getIncidentById(req, res));
+    this.router.get('/incidents/maqueiro/:maqueiro_id', (req, res) => IncidentController.getIncidentsByMaqueiroId(req, res));
+    this.router.get('/incidents/solicitacao/:solicitacaoId', (req, res) => IncidentController.getIncidentsBySolicitacaoId(req, res));
+    this.router.post('/incidents', (req, res) => IncidentController.createIncident(req, res));
+    this.router.put('/incidents/:id', (req, res) => IncidentController.updateIncident(req, res));
+    this.router.delete('/incidents/:id', (req, res) => IncidentController.deleteIncident(req, res));
+    this.router.delete('/incidents/solicitacao/:solicitacaoId', (req, res) => IncidentController.deleteIncidentsBySolicitacaoId(req, res));
+  }
+}
 
-module.exports = router;
+module.exports = new ConsultasRoute().router;

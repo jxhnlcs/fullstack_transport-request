@@ -1,19 +1,21 @@
 const { db } = require('../models/db');
 
-const getAllUsers = (callback) => {
-  const getAllUsersQuery = `
-    SELECT * FROM Users
-  `;
+class UserModel {
+  constructor() {}
 
-  db.query(getAllUsersQuery, (err, result) => {
-    if (err) {
-      return callback(err, null);
-    }
+  getAllUsers(callback) {
+    const getAllUsersQuery = `
+      SELECT * FROM Users
+    `;
 
-    return callback(null, result);
-  });
-};
+    db.query(getAllUsersQuery, (err, result) => {
+      if (err) {
+        return callback(err, null);
+      }
 
-module.exports = {
-  getAllUsers,
-};
+      return callback(null, result);
+    });
+  }
+}
+
+module.exports = new UserModel();
