@@ -17,6 +17,10 @@ O objetivo deste projeto é capacitar os alunos a aplicar os conceitos e prátic
 ## Descrição do Problema 📄
 Os maqueiros em um hospital público enfrentam desafios diários na organização e no transporte de pacientes dentro da instituição. Muitas vezes, a falta de comunicação, recursos limitados e sistemas desatualizados podem dificultar suas tarefas, resultando em atrasos e possíveis impactos na qualidade do atendimento aos pacientes.
 
+## Relatório de Testes
+- Acesse o link abaixo para visualizar os testes das rotas da API
+- https://drive.google.com/file/d/1VmQyegxHpT7kXAScLt9h5O1uWZfKT8QM/view
+
 ## Tecnologias Utilizadas 🛠️
 
 ### Frontend
