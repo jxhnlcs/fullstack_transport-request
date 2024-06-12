@@ -15,6 +15,8 @@ class ConsultasRoute {
     // Rotas de Login e Cadastro
     this.router.post('/login', (req, res) => LoginController.fazerLogin(req, res));
     this.router.post('/register', (req, res) => LoginController.cadastrarUsuario(req, res));
+    this.router.post('/update-password', (req, res) => LoginController.updatePassword(req, res));
+    this.router.post('/verify-first-access', (req, res) => LoginController.verificarPrimeiroAcesso(req, res));
 
     // Rota de Usuários
     this.router.get('/users', (req, res) => UserController.getAllUsers(req, res));

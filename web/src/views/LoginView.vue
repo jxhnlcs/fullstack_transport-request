@@ -10,7 +10,11 @@
           </div>
           <div class="input-field">
             <i class="fas fa-lock"></i>
-            <input type="password" v-model="signInPassword" placeholder="Senha" />
+            <input
+              type="password"
+              v-model="signInPassword"
+              placeholder="Senha"
+            />
           </div>
           <input type="submit" value="Entrar" class="btn solid" />
         </form>
@@ -21,7 +25,8 @@
         <div class="content">
           <h3>Sistema de Transporte de Macas</h3>
           <p>
-            Bem-vindo ao Sistema de Maqueiros do Cleriston Andrade! Descubra um mundo de possibilidades no nosso sistema avançado e moderno.
+            Bem-vindo ao Sistema de Maqueiros do Cleriston Andrade! Descubra um
+            mundo de possibilidades no nosso sistema avançado e moderno.
           </p>
         </div>
         <img src="../assets/gifs/login-animate.svg" class="image" alt="" />
@@ -31,20 +36,22 @@
 </template>
 
 <script>
-
-import Swal from 'sweetalert2';
-import axios from '@/utils/axios';
+import Swal from "sweetalert2";
+import axios from "@/utils/axios";
 
 export default {
   data() {
     return {
-      signInUsername: '',
-      signInPassword: '',
+      signInUsername: "",
+      signInPassword: "",
     };
   },
 
   beforeRouteEnter(to, from, next) {
-    const documentTitle = typeof to.meta.title === 'string' ? to.meta.title : 'Cleriston Transporte';
+    const documentTitle =
+      typeof to.meta.title === "string"
+        ? to.meta.title
+        : "Cleriston Transporte";
     document.title = documentTitle;
     next();
   },
@@ -52,10 +59,79 @@ export default {
   methods: {
     async handleSignIn() {
       try {
+        const firstAccessResponse = await axios.post('/verify-first-access', {
+          username: this.signInUsername,
+          password: this.signInPassword,
+        });
+
+        console.log('Resposta da verificação de primeiro acesso:', firstAccessResponse.data);
+
+        if (firstAccessResponse.data.first_access === 0) {
+          const { value: newPassword } = await Swal.fire({
+            title: 'Primeiro Acesso',
+            input: 'password',
+            inputLabel: 'Adicione sua nova senha',
+            inputPlaceholder: 'Digite sua nova senha',
+            inputAttributes: {
+              maxlength: 100,
+              autocapitalize: 'off',
+              autocorrect: 'off'
+            },
+            showCancelButton: true
+          });
+
+          if (newPassword) {
+            await axios.post('/update-password', {
+              userId: firstAccessResponse.data.userid,
+              newPassword: newPassword,
+            });
+
+            this.signInPassword = newPassword;
+
+            await Swal.fire({
+              title: 'Senha atualizada!',
+              text: 'O login será efetuado com sua nova senha!',
+              icon: 'success',
+            });
+
+            await this.performLogin();
+          }
+        } else {
+          await this.performLogin();
+        }
+      } catch (error) {
+        console.error('Erro ao verificar o primeiro acesso:', error);
+
+        if (error.response && error.response.status === 404) {
+          await Swal.fire({
+            icon: 'error',
+            title: 'Usuário não encontrado',
+            text: 'Usuário não encontrado. Por favor, tente novamente.',
+          });
+        } else if (error.response && error.response.status === 401) {
+          await Swal.fire({
+            icon: 'error',
+            title: 'Senha não coincide',
+            text: 'Senha não coincide com a senha aleatória. Por favor, tente novamente.',
+          });
+        } else {
+          await Swal.fire({
+            icon: 'error',
+            title: 'Erro ao verificar o primeiro acesso',
+            text: 'Ocorreu um erro ao verificar o primeiro acesso. Por favor, tente novamente mais tarde.',
+          });
+        }
+      }
+    },
+
+    async performLogin() {
+      try {
         const response = await axios.post('/login', {
           username: this.signInUsername,
           password: this.signInPassword,
         });
+
+        console.log('Resposta do login:', response.data);
 
         if (response.data.authenticated) {
           localStorage.setItem('token', response.data.token);
@@ -98,23 +174,23 @@ export default {
         }
       }
     },
-  }
+  },
 };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 body,
 input {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 .container {
@@ -210,7 +286,7 @@ form.sign-in-form {
 
 .btn {
   width: 150px;
-  background-color: #2980B9;
+  background-color: #2980b9;
   border: none;
   outline: none;
   height: 49px;
@@ -244,7 +320,12 @@ form.sign-in-form {
   top: -10%;
   right: 48%;
   transform: translateY(-50%);
-  background-image: linear-gradient(-45deg, #2980B9 0%, #6DD5FA 100%, #FFFFFF 100%);
+  background-image: linear-gradient(
+    -45deg,
+    #2980b9 0%,
+    #6dd5fa 100%,
+    #ffffff 100%
+  );
   transition: 1.8s ease-in-out;
   border-radius: 50%;
   z-index: 6;
@@ -455,7 +536,7 @@ form.sign-in-form {
     padding: 0 1.5rem;
   }
 
-  .signin{
+  .signin {
     margin-top: -180px;
   }
 

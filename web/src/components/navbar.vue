@@ -9,20 +9,33 @@
           @input="search"
         />
       </div>
-      <button v-if="isAdmin" class="add-button"><i class="bx bx-user-plus"></i></button>
+      <button v-if="isAdmin" @click="openModal" class="add-button"><i class="bx bx-user-plus"></i></button>
+      <UserModal v-if="showModal" @close="closeModal" :userData="userData" />
     </div>
   </nav>
 </template>
 
 <script>
 
+import UserModal from '@/components/userRegisterModal.vue';
 import { jwtDecode } from 'jwt-decode';
 
 export default {
+
+  components: {
+    UserModal
+  },
+
   data() {
     return {
       searchQuery: "",
       isAdmin: false,
+      showModal: false,
+      userData: {
+        name: '',
+        username: '',
+        email: '',
+      }
     };
   },
 
@@ -41,6 +54,14 @@ export default {
     search() {
       this.$emit("search-events", this.searchQuery);
     },
+
+    openModal() {
+      this.showModal = true;
+    },
+
+    closeModal() {
+      this.showModal = false;
+    }
   },
 };
 </script>
