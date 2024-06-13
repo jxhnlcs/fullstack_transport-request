@@ -16,7 +16,6 @@
 </template>
 
 <script>
-
 import UserModal from '@/components/userRegisterModal.vue';
 import { jwtDecode } from 'jwt-decode';
 
@@ -61,6 +60,13 @@ export default {
 
     closeModal() {
       this.showModal = false;
+      this.resetForm();
+    },
+
+    resetForm() {
+      this.userData.name = '';
+      this.userData.username = '';
+      this.userData.email = '';
     }
   },
 };

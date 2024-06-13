@@ -41,7 +41,7 @@
                     <i class="bx bx-check"></i>
                   </button>
                   <button
-                    @click="rejectRequest(request.id)"
+                    @click="rejectRequest(request)"
                     class="reject-btn"
                   >
                     <i class="bx bx-x"></i>
@@ -284,7 +284,7 @@ export default {
       }
     },
 
-    async rejectRequest(id) {
+    async rejectRequest(request) {
       const confirmResult = await Swal.fire({
         title: "Tem certeza?",
         text: `Você deseja recusar esta solicitação?`,
@@ -298,10 +298,16 @@ export default {
 
       if (confirmResult.isConfirmed) {
         try {
-          await axios.put(`/transport-requests/${id}/reject`, {
-            maqueiro_id: this.maqueiro_id
-          });
-          this.requests = this.requests.filter(request => request.id !== id);
+          if (request.maqueiro_id) {
+            await axios.put(`/transport-requests/${request.id}/request-status`, {
+              request_status: "Negado"
+            });
+          } else {
+            await axios.put(`/transport-requests/${request.id}/reject`, {
+              maqueiro_id: this.maqueiro_id
+            });
+          }
+          this.fetchRequests();
           this.$emit("dataUpdated");
           Swal.fire({
             icon: "success",

@@ -1,7 +1,7 @@
 <template>
   <div class="modal">
     <div class="modal-content">
-      <span class="close" @click="$emit('close')">&times;</span>
+      <span class="close" @click="closeModal">&times;</span>
       <h2>Usuários</h2>
       <form @submit.prevent="submitUser">
         <div class="form-row">
@@ -61,7 +61,6 @@
   </div>
 </template>
 
-
 <script>
 import axios from "@/utils/axios";
 import Swal from "sweetalert2";
@@ -114,6 +113,7 @@ export default {
         icon: "success",
         confirmButtonText: "OK",
       });
+      this.resetForm();
       this.$emit("close");
       } catch (error) {
       Swal.fire({
@@ -124,10 +124,20 @@ export default {
       });
       }
     },
+
+    resetForm() {
+      this.userData.name = '';
+      this.userData.username = '';
+      this.userData.email = '';
+    },
+
+    closeModal() {
+      this.resetForm();
+      this.$emit('close');
+    }
   },
 };
 </script>
-
 
 <style scoped>
 .modal {
