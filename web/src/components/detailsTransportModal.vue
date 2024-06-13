@@ -53,7 +53,10 @@
         <button
           @click="reportIncident"
           class="incident-btn"
-          v-if="requestData.status === 'Em transporte'"
+          v-if="
+            requestData.status === 'Em transporte' ||
+            requestData.status === 'Chegou ao destino'
+          "
         >
           Relatar Incidente
         </button>
@@ -100,7 +103,11 @@
       </div>
       <div v-if="historics.length > 0" class="history-timeline">
         <h3>Histórico do Transporte</h3>
-        <div v-for="historic in historics" :key="historic.id" class="timeline-item">
+        <div
+          v-for="historic in historics"
+          :key="historic.id"
+          class="timeline-item"
+        >
           <i class="bx bx-timer"></i>
           <div class="timeline-content">
             <span>{{ formatDateHour(historic.timestamp) }}</span>
@@ -259,9 +266,7 @@ export default {
     },
     async fetchHistorics() {
       try {
-        const response = await axios.get(
-          `/historic/${this.requestData.id}`
-        );
+        const response = await axios.get(`/historic/${this.requestData.id}`);
         this.historics = response.data;
       } catch (error) {
         console.error("Erro ao buscar histórico:", error);
@@ -271,7 +276,9 @@ export default {
       return moment(dateString).tz("America/Sao_Paulo").format("DD/MM/YYYY");
     },
     formatDateHour(dateString) {
-      return moment(dateString).tz("America/Sao_Paulo").format("DD/MM/YYYY - HH:mm:ss");
+      return moment(dateString)
+        .tz("America/Sao_Paulo")
+        .format("DD/MM/YYYY - HH:mm:ss");
     },
     togglePriorityForm() {
       this.showPriorityForm = !this.showPriorityForm;
@@ -512,5 +519,4 @@ h2 {
   font-size: 16px;
   cursor: pointer;
 }
-
 </style>

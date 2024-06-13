@@ -5,11 +5,11 @@
         <form class="sign-in-form" @submit.prevent="handleSignIn">
           <h2 class="title">Login</h2>
           <div class="input-field">
-            <i class="fas fa-user"></i>
+            <i class="bx bxs-user"></i>
             <input type="text" v-model="signInUsername" placeholder="Usuário" />
           </div>
           <div class="input-field">
-            <i class="fas fa-lock"></i>
+            <i class="bx bxs-lock"></i>
             <input
               type="password"
               v-model="signInPassword"
@@ -23,7 +23,10 @@
     <div class="panels-container">
       <div class="panel left-panel">
         <div class="content">
-          <h3>Sistema de Transporte de Macas</h3>
+          <div class="logo">
+            <img src="../assets/images/logo.png" alt="" />
+            <img src="../assets/images/logomarca.png" alt="" />
+          </div>
           <p>
             Bem-vindo ao Sistema de Maqueiros do Cleriston Andrade! Descubra um
             mundo de possibilidades no nosso sistema avançado e moderno.
@@ -59,27 +62,27 @@ export default {
   methods: {
     async handleSignIn() {
       try {
-        const firstAccessResponse = await axios.post('/verify-first-access', {
+        const firstAccessResponse = await axios.post("/verify-first-access", {
           username: this.signInUsername,
           password: this.signInPassword,
         });
 
         if (firstAccessResponse.data.first_access === 0) {
           const { value: newPassword } = await Swal.fire({
-            title: 'Primeiro Acesso',
-            input: 'password',
-            inputLabel: 'Adicione sua nova senha',
-            inputPlaceholder: 'Digite sua nova senha',
+            title: "Primeiro Acesso",
+            input: "password",
+            inputLabel: "Adicione sua nova senha",
+            inputPlaceholder: "Digite sua nova senha",
             inputAttributes: {
               maxlength: 100,
-              autocapitalize: 'off',
-              autocorrect: 'off'
+              autocapitalize: "off",
+              autocorrect: "off",
             },
-            showCancelButton: true
+            showCancelButton: true,
           });
 
           if (newPassword) {
-            await axios.post('/update-password', {
+            await axios.post("/update-password", {
               userId: firstAccessResponse.data.userid,
               newPassword: newPassword,
             });
@@ -87,9 +90,9 @@ export default {
             this.signInPassword = newPassword;
 
             await Swal.fire({
-              title: 'Senha atualizada!',
-              text: 'O login será efetuado com sua nova senha!',
-              icon: 'success',
+              title: "Senha atualizada!",
+              text: "O login será efetuado com sua nova senha!",
+              icon: "success",
             });
 
             await this.performLogin();
@@ -98,25 +101,25 @@ export default {
           await this.performLogin();
         }
       } catch (error) {
-        console.error('Erro ao verificar o primeiro acesso:', error);
+        console.error("Erro ao verificar o primeiro acesso:", error);
 
         if (error.response && error.response.status === 404) {
           await Swal.fire({
-            icon: 'error',
-            title: 'Usuário não encontrado',
-            text: 'Usuário não encontrado. Por favor, tente novamente.',
+            icon: "error",
+            title: "Usuário não encontrado",
+            text: "Usuário não encontrado. Por favor, tente novamente.",
           });
         } else if (error.response && error.response.status === 401) {
           await Swal.fire({
-            icon: 'error',
-            title: 'Senha não coincide',
-            text: 'Senha não coincide com a senha aleatória. Por favor, tente novamente.',
+            icon: "error",
+            title: "Senha não coincide",
+            text: "Senha não coincide com a senha aleatória. Por favor, tente novamente.",
           });
         } else {
           await Swal.fire({
-            icon: 'error',
-            title: 'Erro ao verificar o primeiro acesso',
-            text: 'Ocorreu um erro ao verificar o primeiro acesso. Por favor, tente novamente mais tarde.',
+            icon: "error",
+            title: "Erro ao verificar o primeiro acesso",
+            text: "Ocorreu um erro ao verificar o primeiro acesso. Por favor, tente novamente mais tarde.",
           });
         }
       }
@@ -124,48 +127,48 @@ export default {
 
     async performLogin() {
       try {
-        const response = await axios.post('/login', {
+        const response = await axios.post("/login", {
           username: this.signInUsername,
           password: this.signInPassword,
         });
 
         if (response.data.authenticated) {
-          localStorage.setItem('token', response.data.token);
+          localStorage.setItem("token", response.data.token);
 
           await Swal.fire({
-            icon: 'success',
-            title: 'Login feito com sucesso',
+            icon: "success",
+            title: "Login feito com sucesso",
             toast: true,
-            position: 'top-end',
+            position: "top-end",
             showConfirmButton: false,
             timer: 1500,
             timerProgressBar: true,
             didOpen: (toast) => {
-              toast.addEventListener('mouseenter', Swal.stopTimer);
-              toast.addEventListener('mouseleave', Swal.resumeTimer);
+              toast.addEventListener("mouseenter", Swal.stopTimer);
+              toast.addEventListener("mouseleave", Swal.resumeTimer);
             },
           });
 
-          this.$router.push('/home');
+          this.$router.push("/home");
         } else if (response.status === 401) {
           await Swal.fire({
-            icon: 'error',
-            title: 'Senha Incorreta',
-            text: 'Credenciais inválidas. Por favor, tente novamente.',
+            icon: "error",
+            title: "Senha Incorreta",
+            text: "Credenciais inválidas. Por favor, tente novamente.",
           });
         }
       } catch (error) {
         if (error.response && error.response.status === 401) {
           await Swal.fire({
-            icon: 'error',
-            title: 'Credenciais inválidas',
-            text: 'Credenciais inválidas. Por favor, tente novamente.',
+            icon: "error",
+            title: "Credenciais inválidas",
+            text: "Credenciais inválidas. Por favor, tente novamente.",
           });
         } else {
           await Swal.fire({
-            icon: 'error',
-            title: 'Erro ao efetuar o login',
-            text: 'Ocorreu um erro ao processar o login. Por favor, tente novamente mais tarde.',
+            icon: "error",
+            title: "Erro ao efetuar o login",
+            text: "Ocorreu um erro ao processar o login. Por favor, tente novamente mais tarde.",
           });
         }
       }
@@ -203,6 +206,11 @@ input {
   height: 100%;
   top: 0;
   left: 0;
+}
+
+.logo{
+  display: flex;
+  height: 80px;
 }
 
 .signin {
@@ -367,6 +375,7 @@ form.sign-in-form {
 .panel p {
   font-size: 0.95rem;
   padding: 0.7rem 0;
+  text-align: left;
 }
 
 .btn.transparent {
