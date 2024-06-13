@@ -464,7 +464,7 @@ body.shrink .tooltip {
 @media only screen and (max-width: 768px) {
 
   nav {
-    height: 350vh;
+    height: 290vh;
     width: 4.4rem;
     padding: 1.8rem 0.1rem;
     display: flex;
