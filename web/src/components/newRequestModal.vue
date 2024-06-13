@@ -2,22 +2,43 @@
   <div class="modal">
     <div class="modal-content">
       <span class="close" @click="$emit('close')">&times;</span>
-      <h2>{{ isEditMode ? 'Editando Solicitação de Transporte' : 'Nova Solicitação de Transporte' }}</h2>
+      <h2>
+        {{
+          isEditMode
+            ? "Editando Solicitação de Transporte"
+            : "Nova Solicitação de Transporte"
+        }}
+      </h2>
       <form @submit.prevent="submitRequest">
         <div class="form-row">
           <div class="form-group">
             <label for="patient_name">Nome do Paciente</label>
-            <input type="text" id="patient_name" v-model="requestData.patient_name" required>
+            <input
+              type="text"
+              id="patient_name"
+              v-model="requestData.patient_name"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="initial_point">Origem</label>
-            <input type="text" id="initial_point" v-model="requestData.initial_point" required>
+            <input
+              type="text"
+              id="initial_point"
+              v-model="requestData.initial_point"
+              required
+            />
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label for="destination_point">Destino</label>
-            <input type="text" id="destination_point" v-model="requestData.destination_point" required>
+            <input
+              type="text"
+              id="destination_point"
+              v-model="requestData.destination_point"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="priority">Prioridade</label>
@@ -30,7 +51,7 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label for="status">Status</label>
+            <label for="status">Transporte</label>
             <select id="status" v-model="requestData.status" required>
               <option value="Aguardando transporte">Aguardando transporte</option>
               <option value="Em transporte">Em transporte</option>
@@ -39,9 +60,16 @@
           </div>
           <div class="form-group">
             <label for="maqueiro_id">Maqueiro</label>
-            <select id="maqueiro_id" v-model="requestData.maqueiro_id" required>
-              <option v-for="maqueiro in maqueiros" :key="maqueiro.id" :value="maqueiro.id">
+            <select id="maqueiro_id" v-model="requestData.maqueiro_id">
+              <option
+                v-for="maqueiro in filteredMaqueiros"
+                :key="maqueiro.id"
+                :value="maqueiro.id"
+              >
                 {{ maqueiro.name }}
+              </option>
+              <option v-if="filteredMaqueiros.length === 0" disabled>
+                Nenhum maqueiro aceitou o transporte
               </option>
             </select>
           </div>
@@ -49,12 +77,36 @@
         <div class="form-row">
           <div class="form-group">
             <label for="data">Data</label>
-            <input type="date" id="data" v-model="requestData.data" required>
+            <input type="date" id="data" v-model="requestData.data" required />
+          </div>
+          <div class="form-group" v-if="isEditMode">
+            <label for="request_status">Status</label>
+            <select
+              id="request_status"
+              v-model="requestData.request_status"
+              required
+              :disabled="
+                !['Pendente', 'Negado'].includes(requestData.request_status)
+              "
+            >
+              <option value="Pendente">Pendente</option>
+              <option value="Negado">Negado</option>
+              <option value="Aceito">Aceito</option>
+            </select>
           </div>
         </div>
         <div class="modal-actions">
-          <button type="submit" class="submit-btn">{{ isEditMode ? 'Atualizar Solicitação' : 'Criar Solicitação' }}</button>
-          <button v-if="isEditMode" type="button" class="delete-btn" @click="confirmDelete">Deletar Solicitação</button>
+          <button type="submit" class="submit-btn">
+            {{ isEditMode ? "Atualizar Solicitação" : "Criar Solicitação" }}
+          </button>
+          <button
+            v-if="isEditMode"
+            type="button"
+            class="delete-btn"
+            @click="confirmDelete"
+          >
+            Deletar Solicitação
+          </button>
         </div>
       </form>
     </div>
@@ -62,50 +114,61 @@
 </template>
 
 <script>
-import axios from '@/utils/axios';
-import Swal from 'sweetalert2';
+import axios from "@/utils/axios";
+import Swal from "sweetalert2";
 
 export default {
   props: {
     requestData: {
       type: Object,
-      required: true
+      required: true,
     },
     isEditMode: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
-      maqueiros: []
+      maqueiros: [],
     };
   },
   created() {
     this.fetchMaqueiros();
   },
+  computed: {
+    filteredMaqueiros() {
+      if (!this.requestData.rejected_by) {
+        return this.maqueiros;
+      }
+      const rejectedIds = this.requestData.rejected_by.split(',').map(Number);
+      return this.maqueiros.filter(maqueiro => !rejectedIds.includes(maqueiro.id));
+    }
+  },
   methods: {
     async fetchMaqueiros() {
       try {
-        const response = await axios.get('/users');
-        this.maqueiros = response.data.filter(user => user.role === 'Maqueiro');
+        const response = await axios.get("/users");
+        this.maqueiros = response.data.filter(
+          (user) => user.role === "Maqueiro"
+        );
       } catch (error) {
-        console.error('Erro ao buscar maqueiros:', error);
+        console.error("Erro ao buscar maqueiros:", error);
       }
     },
     submitRequest() {
-      this.$emit('submit-request');
+      this.$emit("submit-request");
     },
     confirmDelete() {
       Swal.fire({
-        title: 'Tem certeza?',
-        text: 'Você não poderá reverter isso!',
-        icon: 'warning',
+        title: "Tem certeza?",
+        text: "Você não poderá reverter isso!",
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sim, deletar!',
-        cancelButtonText: 'Cancelar'
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sim, deletar!",
+        cancelButtonText: "Cancelar",
       }).then((result) => {
         if (result.isConfirmed) {
           this.deleteRequest();
@@ -113,9 +176,9 @@ export default {
       });
     },
     deleteRequest() {
-      this.$emit('delete-request', this.requestData.id);
-    }
-  }
+      this.$emit("delete-request", this.requestData.id);
+    },
+  },
 };
 </script>
 
@@ -201,14 +264,14 @@ h2 {
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #2980B9;
+  border-color: #2980b9;
 }
 
 .submit-btn {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  background-color: #2980B9;
+  background-color: #2980b9;
   color: white;
   font-size: 16px;
   cursor: pointer;

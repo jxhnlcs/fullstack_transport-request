@@ -41,7 +41,7 @@
                     <i class="bx bx-check"></i>
                   </button>
                   <button
-                    @click="updateRequestStatus(request.id, 'Negado')"
+                    @click="rejectRequest(request.id)"
                     class="reject-btn"
                   >
                     <i class="bx bx-x"></i>
@@ -92,7 +92,7 @@
               <td>{{ request.status }}</td>
               <td>{{ request.priority }}</td>
               <td v-if="isAdmin">{{ request.request_status }}</td>
-              <td v-if="isAdmin">{{ request.maqueiro_name }}</td>
+              <td v-if="isAdmin">{{ request.maqueiro_id ? request.maqueiro_name : 'Aguardando maqueiro' }}</td>
               <td>{{ formatDate(request.data) }}</td>
             </tr>
           </tbody>
@@ -151,6 +151,7 @@ export default {
         patient_name: "",
         initial_point: "",
         destination_point: "",
+        request_status: "Pendente",
         priority: "Baixa",
         status: "Aguardando transporte",
         maqueiro_id: null,
@@ -162,7 +163,7 @@ export default {
   computed: {
     pendingRequests() {
       return this.requests.filter(
-        (request) => request.request_status === "Pendente"
+        (request) => request.request_status === "Pendente" && !this.isRejectedByCurrentMaqueiro(request)
       );
     },
     acceptedRequests() {
@@ -195,6 +196,9 @@ export default {
         this.requests = response.data;
       } catch (error) {
         console.error("Erro ao buscar solicitações de transporte:", error);
+        if (error.response && error.response.status === 404) {
+          this.requests = [];
+        }
       }
     },
 
@@ -260,6 +264,7 @@ export default {
         try {
           await axios.put(`/transport-requests/${id}/request-status`, {
             request_status: status,
+            maqueiro_id: status === 'Aceito' ? this.maqueiro_id : null
           });
           this.fetchRequests();
           this.$emit("dataUpdated");
@@ -277,6 +282,47 @@ export default {
           });
         }
       }
+    },
+
+    async rejectRequest(id) {
+      const confirmResult = await Swal.fire({
+        title: "Tem certeza?",
+        text: `Você deseja recusar esta solicitação?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: `Sim, recusar!`,
+        cancelButtonText: "Cancelar",
+      });
+
+      if (confirmResult.isConfirmed) {
+        try {
+          await axios.put(`/transport-requests/${id}/reject`, {
+            maqueiro_id: this.maqueiro_id
+          });
+          this.requests = this.requests.filter(request => request.id !== id);
+          this.$emit("dataUpdated");
+          Swal.fire({
+            icon: "success",
+            title: `Solicitação recusada`,
+            text: `A solicitação foi recusada com sucesso!`,
+          });
+        } catch (error) {
+          console.error(`Erro ao recusar a solicitação`, error);
+          Swal.fire({
+            icon: "error",
+            title: "Erro",
+            text: `Houve um erro ao recusar a solicitação. Tente novamente mais tarde.`,
+          });
+        }
+      }
+    },
+
+    isRejectedByCurrentMaqueiro(request) {
+      if (!request.rejected_by) return false;
+      const rejectedMaqueiros = request.rejected_by.split(',');
+      return rejectedMaqueiros.includes(String(this.maqueiro_id));
     },
 
     async confirmDeleteRequest(id) {
@@ -330,6 +376,7 @@ export default {
         patient_name: "",
         initial_point: "",
         destination_point: "",
+        request_status: "Pendente",
         priority: "Baixa",
         status: "Aguardando transporte",
         maqueiro_id: null,
@@ -368,6 +415,7 @@ export default {
         patient_name: "",
         initial_point: "",
         destination_point: "",
+        request_status: "Pendente",
         priority: "Baixa",
         status: "Aguardando transporte",
         maqueiro_id: null,

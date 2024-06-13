@@ -68,12 +68,13 @@ CREATE TABLE `TransportRequests` (
   `destination_point` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `maqueiro_id` int(11) NOT NULL,
+  `maqueiro_id` int(11) DEFAULT NULL,
   `request_status` enum('Pendente','Aceito','Negado') COLLATE utf8mb4_unicode_ci DEFAULT 'Pendente',
+  `rejected_by` text COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`),
   KEY `maqueiro_id` (`maqueiro_id`),
   CONSTRAINT `TransportRequests_ibfk_1` FOREIGN KEY (`maqueiro_id`) REFERENCES `Users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
