@@ -461,11 +461,16 @@ body.shrink .tooltip {
   display: grid;
 }
 
-@media only screen and (max-width: 1000px) {
+@media only screen and (max-width: 768px) {
+
   nav {
-    height: 101vh;
+    height: 350vh;
     width: 4.4rem;
     padding: 1.8rem 0.1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: start;
   }
 
   .sidebar-top .icon-logo {
@@ -488,5 +493,7 @@ body.shrink .tooltip {
   .hide {
     display: none;
   }
+  
+
 }
 </style>

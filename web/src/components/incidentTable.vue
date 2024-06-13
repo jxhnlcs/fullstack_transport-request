@@ -147,4 +147,15 @@ export default {
   background-color: #f1f1f1;
   cursor: pointer;
 }
+
+@media (max-width: 768px) {
+  .table-wrapper {
+  max-height: 300px;
+}
+
+.table-container {
+  height: 50%;
+}
+}
 </style>
+
