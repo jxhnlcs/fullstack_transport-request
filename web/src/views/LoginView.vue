@@ -64,8 +64,6 @@ export default {
           password: this.signInPassword,
         });
 
-        console.log('Resposta da verificação de primeiro acesso:', firstAccessResponse.data);
-
         if (firstAccessResponse.data.first_access === 0) {
           const { value: newPassword } = await Swal.fire({
             title: 'Primeiro Acesso',
@@ -130,8 +128,6 @@ export default {
           username: this.signInUsername,
           password: this.signInPassword,
         });
-
-        console.log('Resposta do login:', response.data);
 
         if (response.data.authenticated) {
           localStorage.setItem('token', response.data.token);
