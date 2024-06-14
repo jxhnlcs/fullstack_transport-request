@@ -547,4 +547,19 @@ export default {
   background-color: #e74c3c;
   color: white;
 }
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 100%;
+  }
+
+  .header h1 {
+  font-size: 12px;
+}
+
+.new-request-btn {
+  padding: 5px 20px;
+  font-size: 12px;
+}
+}
 </style>

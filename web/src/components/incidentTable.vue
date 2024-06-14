@@ -150,11 +150,11 @@ export default {
 
 @media (max-width: 768px) {
   .table-wrapper {
-  max-height: 300px;
+  max-height: 1000px;
 }
 
 .table-container {
-  height: 50%;
+  height: 100%;
 }
 }
 </style>

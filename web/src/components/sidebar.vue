@@ -461,10 +461,20 @@ body.shrink .tooltip {
   display: grid;
 }
 
-@media only screen and (max-width: 768px) {
-
+@media (max-width: 1156px) {
   nav {
-    height: 290vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
     width: 4.4rem;
     padding: 1.8rem 0.1rem;
     display: flex;
@@ -493,7 +503,5 @@ body.shrink .tooltip {
   .hide {
     display: none;
   }
-  
-
 }
 </style>

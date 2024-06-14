@@ -26,7 +26,9 @@
           </div>
         </div>
         <div class="modal-actions">
-          <button type="submit" class="submit-btn" :disabled="!isFormValid">Criar Usuário</button>
+          <button type="submit" class="submit-btn" :disabled="!isFormValid">
+            Criar Usuário
+          </button>
         </div>
       </form>
 
@@ -106,35 +108,35 @@ export default {
 
     async submitUser() {
       try {
-      await axios.post("/register", this.userData);
-      Swal.fire({
-        title: "Usuário Criado!",
-        text: "O novo usuário foi criado com sucesso.",
-        icon: "success",
-        confirmButtonText: "OK",
-      });
-      this.resetForm();
-      this.$emit("close");
+        await axios.post("/register", this.userData);
+        Swal.fire({
+          title: "Usuário Criado!",
+          text: "O novo usuário foi criado com sucesso.",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+        this.resetForm();
+        this.$emit("close");
       } catch (error) {
-      Swal.fire({
-        title: "Erro!",
-        text: "Ocorreu um erro ao salvar o usuário.",
-        icon: "error",
-        confirmButtonText: "OK",
-      });
+        Swal.fire({
+          title: "Erro!",
+          text: "Ocorreu um erro ao salvar o usuário.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
       }
     },
 
     resetForm() {
-      this.userData.name = '';
-      this.userData.username = '';
-      this.userData.email = '';
+      this.userData.name = "";
+      this.userData.username = "";
+      this.userData.email = "";
     },
 
     closeModal() {
       this.resetForm();
-      this.$emit('close');
-    }
+      this.$emit("close");
+    },
   },
 };
 </script>
@@ -296,4 +298,9 @@ h2 {
   transition: background-color 0.3s ease;
 }
 
+@media (max-width: 768px) {
+  .modal-content {
+    width: 100%;
+  }
+}
 </style>

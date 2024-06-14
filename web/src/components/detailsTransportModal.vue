@@ -437,7 +437,7 @@ h2 {
 
 .incident-list {
   margin-top: 20px;
-  max-height: 15vh; /* Defina a altura máxima aqui */
+  max-height: 15vh;
   overflow-y: auto;
 }
 
@@ -464,8 +464,8 @@ h2 {
 
 .history-timeline {
   margin-top: 20px;
-  max-height: 20vh; /* Defina a altura máxima aqui */
-  overflow-y: auto; /* Adicione rolagem vertical */
+  max-height: 20vh;
+  overflow-y: auto;
 }
 
 .history-timeline h3 {
@@ -518,5 +518,11 @@ h2 {
   color: white;
   font-size: 16px;
   cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 100%;
+  }
 }
 </style>

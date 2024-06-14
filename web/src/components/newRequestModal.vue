@@ -53,7 +53,9 @@
           <div class="form-group">
             <label for="status">Transporte</label>
             <select id="status" v-model="requestData.status" required>
-              <option value="Aguardando transporte">Aguardando transporte</option>
+              <option value="Aguardando transporte">
+                Aguardando transporte
+              </option>
               <option value="Em transporte">Em transporte</option>
               <option value="Chegou ao destino">Chegou ao destino</option>
             </select>
@@ -141,9 +143,11 @@ export default {
       if (!this.requestData.rejected_by) {
         return this.maqueiros;
       }
-      const rejectedIds = this.requestData.rejected_by.split(',').map(Number);
-      return this.maqueiros.filter(maqueiro => !rejectedIds.includes(maqueiro.id));
-    }
+      const rejectedIds = this.requestData.rejected_by.split(",").map(Number);
+      return this.maqueiros.filter(
+        (maqueiro) => !rejectedIds.includes(maqueiro.id)
+      );
+    },
   },
   methods: {
     async fetchMaqueiros() {
@@ -302,5 +306,11 @@ h2 {
   display: flex;
   justify-content: center;
   margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 100%;
+  }
 }
 </style>

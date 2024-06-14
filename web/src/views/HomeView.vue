@@ -234,6 +234,7 @@ export default {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+
   overflow: hidden;
 }
 
@@ -285,10 +286,25 @@ export default {
   overflow: hidden;
 }
 
-@media (max-width: 768px) {
-
-  .app{
+@media (max-width: 1156px) {
+  .app {
     height: auto;
+  }
+
+  .column-content {
+    margin-left: 15.4rem;
+    transition: margin-left 0.3s;
+  }
+}
+
+@media (max-width: 768px) {
+  .app {
+    height: auto;
+  }
+
+  .column-content {
+    margin-left: 4.4rem;
+    transition: margin-left 0.3s;
   }
 
   .content {
@@ -297,7 +313,6 @@ export default {
 
   .table-chart-container {
     flex-direction: column;
-    flex: 1.5;
   }
 
   .table-chart-container > * {
